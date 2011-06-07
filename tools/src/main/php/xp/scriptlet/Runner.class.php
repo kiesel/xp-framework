@@ -314,6 +314,13 @@
         $response= $this->fail($e, HttpConstants::STATUS_PRECONDITION_FAILED, $flags & WebDebug::STACKTRACE);
       }
 
+      // Check Firebug
+      foreach (Logger::getInstance()->getCategory()->getAppenders() as $appender) {
+        if (!$appender instanceof FirebugAppender) continue;
+
+        $appender->writeTo($response);
+      }
+
       // Send output
       $response->isCommitted() || $response->flush();
       $response->sendContent();
