@@ -29,7 +29,25 @@
      * @see     php://openlog for valid facility values
      */
     public function __construct($identifier= NULL, $facility= LOG_USER) {
-      $this->identifier= $identifier;
+      $this->setIdentifer($identifier);
+      $this->setFacility($facility);
+    }
+
+    /**
+     * Set identifier
+     *
+     * @param   string identifier
+     */
+    public function setIdentifier($identifier) {
+      $this->identifier($identifier);
+    }
+
+    /**
+     * Set facility to log to
+     *
+     * @param   int facility
+     */
+    public function setFacility($facility) {
       $this->facility= $facility;
     }
     

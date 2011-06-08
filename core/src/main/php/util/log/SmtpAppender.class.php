@@ -33,6 +33,33 @@
       $this->prefix= $prefix;
       $this->sync= $sync;
     }
+
+    /**
+     * Set email
+     *
+     * @param   string email
+     */
+    public function setEmail($email) {
+      $this->email= $email;
+    }
+
+    /**
+     * Set prefix
+     *
+     * @param   string prefix
+     */
+    public function setPrefix($prefix) {
+      $this->prefix= $prefix;
+    }
+
+    /**
+     * Set sync
+     *
+     * @param   bool sync
+     */
+    public function setSync($sync) {
+      $this->sync= $sync;
+    }
     
     /**
      * Destructor

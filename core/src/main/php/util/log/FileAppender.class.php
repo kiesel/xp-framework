@@ -23,7 +23,16 @@
      * @param   string filename default 'php://stderr' filename to log to
      */
     public function __construct($filename= 'php://stderr') {
-      $this->filename= $filename;
+      $this->setFilename($filename);
+    }
+
+    /**
+     * Set filename
+     *
+     * @param   string filename
+     */
+    public function setFilename($filename) {
+      $this->filename= strftime($filename);
     }
     
     /**

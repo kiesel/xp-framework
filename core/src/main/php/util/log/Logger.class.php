@@ -158,12 +158,8 @@
           
           // Params
           foreach ($params as $param) {
-            $a->{$param}= strftime(
-              $prop->readString(
-                $section,
-                'appender.'.$appender.'.param.'.$param,
-                ''
-              )
+            call_user_func_array(array($a, 'set'.$param),
+              array($prop->readString($section, 'appender.'.$appender.'.param.'.$param))
             );
           }
         }
