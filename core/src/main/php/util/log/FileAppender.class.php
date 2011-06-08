@@ -32,7 +32,7 @@
      * @param   string filename
      */
     public function setFilename($filename) {
-      $this->filename= strftime($filename);
+      $this->filename= $filename;
     }
     
     /**
@@ -42,7 +42,7 @@
      */ 
     public function append(LoggingEvent $event) {
       $line= $this->layout->format($event);
-      $fd= fopen($this->filename, 'a');
+      $fd= fopen(strftime($this->filename), 'a');
 
       if ($this->perms) {
         chmod($this->filename, octdec($this->perms));
