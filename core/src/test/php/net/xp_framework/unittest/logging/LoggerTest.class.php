@@ -166,5 +166,81 @@ appender.util.log.FileAppender.levels="ERROR|WARN"
         }
       }
     }
+
+    /**
+     * When calling configure() a second time, categories should be
+     * cleared and afterwards only contain new categories
+     *
+     */
+     #[@test]
+     public function reconfiguringClearsCategories() {
+       $this->logger->configure(Properties::fromString(trim('
+[first]
+appenders="util.log.ConsoleAppender"
+
+[second]
+appenders="util.log.ConsoleAppender"
+      ')));
+
+       // Existing now: 'default', 'first', 'second'
+       $this->assertEquals(3, sizeof($this->logger->getCategoryNames()));
+
+       $this->logger->configure(Properties::fromString(trim('
+[third]
+appenders="util.log.ConsoleAppender"
+      ')));
+
+       // Existing now: 'default', 'third' - not: 'first', 'second'
+       $this->assertEquals(2, sizeof($this->logger->getCategoryNames()));
+     }
+
+    /**
+     * When calling configure() a second time, categories should be
+     * cleared and afterwards only contain new categories; when errors occur,
+     * the original set should be retained, though.
+     *
+     */
+     #[@test]
+     public function reconfiguringClearsCategoriesOnlyWhenNoErrorOccurs() {
+       $this->logger->configure(Properties::fromString(trim('
+[first]
+appenders="util.log.ConsoleAppender"
+
+[second]
+appenders="util.log.ConsoleAppender"
+      ')));
+
+       // Existing now: 'default', 'first', 'second'
+       $this->assertEquals(3, sizeof($this->logger->getCategoryNames()));
+
+       try {
+         $this->logger->configure(Properties::fromString(trim('
+[third]
+appenders="does.not.exist
+        ')));
+       } catch (ClassNotFoundException $ignored) {
+       }
+
+       // Existing now: 'default', 'third' - not: 'first', 'second'
+       $this->assertEquals(3, sizeof($this->logger->getCategoryNames()));
+     }
+
+    /**
+     * Retrieve all existing categories
+     *
+     */
+     #[@test]
+     public function retrieveCategories() {
+      $this->logger->configure(Properties::fromString(trim('
+[sql]
+appenders="util.log.FileAppender"
+appender.util.log.FileAppender.params="filename"
+appender.util.log.FileAppender.param.filename="/var/log/xp/sql-errors_%Y-%m-%d.log"
+appender.util.log.FileAppender.levels="ERROR|WARN"
+      ')));
+
+      $this->assertEquals(array('default', 'sql'), $this->logger->getCategoryNames());
+
+     }
   }
 ?>

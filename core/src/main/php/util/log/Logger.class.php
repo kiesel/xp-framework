@@ -92,7 +92,17 @@
      *
      */
     protected function __construct() {
-      $this->category[self::DFLT]= new LogCategory(self::DFLT);
+      $this->reset();
+    }
+
+    /**
+     * Reset log categories
+     *
+     */
+    protected function reset() {
+      $this->category= array(
+        self::DFLT  => new LogCategory(self::DFLT)
+      );
     }
 
     /**
@@ -105,6 +115,15 @@
       if (!isset($this->category[$name])) $name= self::DFLT;
       return $this->category[$name];
     }
+
+    /**
+     * Retrieve category names
+     *
+     * @return  string[]
+     */
+    public function getCategoryNames() {
+      return array_keys($this->category);
+    }
     
     /**
      * Configure this logger
@@ -112,11 +131,13 @@
      * @param   util.Properties prop instance of a Properties object
      */
     public function configure($prop) {
+
+      $categories= array();
       
       // Read all other properties
       $section= $prop->getFirstSection();
       do {
-        $this->category[$section]= XPClass::forName(
+        $categories[$section]= XPClass::forName(
           $prop->readString($section, 'category', 'util.log.LogCategory')
         )->newInstance(
           $section,
@@ -150,7 +171,7 @@
             }
           }
           
-          $a= $this->category[$section]->addAppender(
+          $a= $categories[$section]->addAppender(
             XPClass::forName($appender)->newInstance(),
             $flags
           );
@@ -164,6 +185,10 @@
           }
         }
       } while ($section= $prop->getNextSection());
+
+      // Clear existing categories, then add newly configured
+      $this->reset();
+      foreach ($categories as $name => $c) { $this->category[$name]= $c; }
     }
     
     /**
