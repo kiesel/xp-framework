@@ -315,10 +315,16 @@
       }
 
       // Check Firebug
-      foreach (Logger::getInstance()->getCategory()->getAppenders() as $appender) {
-        if (!$appender instanceof FirebugAppender) continue;
+      if (($flags & WebDebug::XML)) {
+        foreach (Logger::getInstance()->getCategoryNames() as $category) {
+          foreach (Logger::getInstance()->getCategory()->getAppenders() as $appender) {
+            if (!$appender instanceof FirebugAppender) continue;
 
-        $appender->writeTo($response);
+            // Currently, only one instance of a FireBugAppender is supported...
+            $appender->writeTo($response);
+            break (2);
+          }
+        }
       }
 
       // Send output
