@@ -84,11 +84,8 @@
         list($level, $line)= $event;
         
         switch ($level) {
-          default:
+          default: $type= LogLevel::nameOf($level); break;
           case LogLevel::DEBUG: $type= "LOG"; break;
-          case LogLevel::INFO: $type= "INFO"; break;
-          case LogLevel::WARN: $type= "WARN"; break;
-          case LogLevel::ERROR: $type= "ERROR"; break;
         }
 
         $str= $encoder->encode(array(
