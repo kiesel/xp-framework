@@ -315,16 +315,14 @@
       }
 
       // Check Firebug
-      if (($flags & WebDebug::XML)) {
-        foreach (Logger::getInstance()->getCategoryNames() as $category) {
-          foreach (Logger::getInstance()->getCategory()->getAppenders() as $appender) {
-            if (!$appender instanceof FirebugAppender) continue;
+      if (($flags & WebDebug::XML) && isset($response->document)) {
+        $cat= Logger::getInstance()->getCategory();
+        $cat->debug('~ XML output follows:');
+        $cat->debug($response->document->getDeclaration()."\n".$response->document->getSource(0));
+      }
 
-            // Currently, only one instance of a FireBugAppender is supported...
-            $appender->writeTo($response);
-            break (2);
-          }
-        }
+      if (class_exists('FirebugProtocol') && FirebugProtocol::hasInstance()) {
+        FirebugProtocol::getInstance()->writeTo($response);
       }
 
       // Send output
@@ -335,11 +333,6 @@
       $instance && $instance->finalize();
 
       // Debugging
-      if (($flags & WebDebug::XML) && isset($response->document)) {
-        flush();
-        echo '<xmp>', $response->document->getDeclaration()."\n".$response->document->getSource(0), '</xmp>';
-      }
-      
       if (($flags & WebDebug::ERRORS)) {
         flush();
         echo '<xmp>', $e ? $e->toString() : '', xp::stringOf(xp::registry('errors')), '</xmp>';
