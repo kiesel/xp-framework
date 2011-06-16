@@ -11,10 +11,10 @@
   );
 
   /**
-   * Appender which appends all data to the FirePHP console
+   * This class implements the FireBug protocol
    *
    * @see      xp://util.log.Appender
-   * @purpose  Appender
+   * @purpose  FireBug HTTP protocol
    */
   class FirebugProtocol extends Object {
     protected static $instance= NULL;
@@ -70,9 +70,9 @@
    /**
     * Write appender data to response
     *
-    * @param   scriptlet.HttpResponse response
+    * @param   scriptlet.Response response
     */
-    public function writeTo(HttpScriptletResponse $response) {
+    public function writeTo(Response $response) {
       $encoder= new JsonDecoder();
 
       $response->setHeader('X-Wf-Protocol-1', 'http://meta.wildfirehq.org/Protocol/JsonStream/0.2');
