@@ -172,8 +172,8 @@ appender.util.log.FileAppender.levels="ERROR|WARN"
      * cleared and afterwards only contain new categories
      *
      */
-     #[@test]
-     public function reconfiguringClearsCategories() {
+    #[@test]
+    public function reconfiguringClearsCategories() {
        $this->logger->configure(Properties::fromString(trim('
 [first]
 appenders="util.log.ConsoleAppender"
@@ -200,8 +200,8 @@ appenders="util.log.ConsoleAppender"
      * the original set should be retained, though.
      *
      */
-     #[@test]
-     public function reconfiguringClearsCategoriesOnlyWhenNoErrorOccurs() {
+    #[@test]
+    public function reconfiguringClearsCategoriesOnlyWhenNoErrorOccurs() {
        $this->logger->configure(Properties::fromString(trim('
 [first]
 appenders="util.log.ConsoleAppender"
@@ -229,8 +229,8 @@ appenders="does.not.exist
      * Retrieve all existing categories
      *
      */
-     #[@test]
-     public function retrieveCategories() {
+    #[@test]
+    public function retrieveCategories() {
       $this->logger->configure(Properties::fromString(trim('
 [sql]
 appenders="util.log.FileAppender"
