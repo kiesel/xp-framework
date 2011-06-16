@@ -240,7 +240,20 @@ appender.util.log.FileAppender.levels="ERROR|WARN"
       ')));
 
       $this->assertEquals(array('default', 'sql'), $this->logger->getCategoryNames());
-
      }
+
+    /**
+     * Assert exception being thrown
+     *
+     */
+    #[@test, @expect(class= 'lang.IllegalStateException', withMessage= '/Appender util\.log\.ConsoleAppender .*/')]
+    public function invalidParamYieldsExceptionWhenConfiguring() {
+       $this->logger->configure(Properties::fromString(trim('
+[default]
+appenders="util.log.ConsoleAppender"
+appender.util.log.ConsoleAppender.params="doesNotExist"
+appender.util.log.ConsoleAppender.param.doesNotExist=1
+      ')));
+    }
   }
 ?>

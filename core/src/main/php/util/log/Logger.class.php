@@ -178,10 +178,15 @@
           $params= $prop->readArray($section, 'appender.'.$appender.'.params', array());
           
           // Params
-          foreach ($params as $param) {
-            call_user_func_array(array($a, 'set'.$param),
-              array($prop->readString($section, 'appender.'.$appender.'.param.'.$param))
-            );
+          try {
+            foreach ($params as $param) {
+              $a->getClass()->getMethod('set'.$param)->invoke(
+                $a,
+                array($prop->readString($section, 'appender.'.$appender.'.param.'.$param))
+              );
+            }
+          } catch (ElementNotFoundException $e) {
+            throw new IllegalStateException('Appender '.$appender.' of logcategory '.$section.' configured for param '.$param.', but has no setter.', $e);
           }
         }
       } while ($section= $prop->getNextSection());
