@@ -69,5 +69,29 @@
         $this->parse("@key('value')")
       );
     }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function annotationWithKeyValue() {
+      $this->assertEquals(
+        array('key' => array('key' => 'value')),
+        $this->parse("@key(key= 'value')")
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function annotationWithMultipleKeyValue() {
+      $this->assertEquals(
+        array('key' => array('inner' => 'value', 'second' => 'anotherVal')),
+        $this->parse("@key(inner= 'value', second= 'anotherVal')")
+      );
+    }
   }
 ?>

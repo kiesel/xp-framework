@@ -25,6 +25,9 @@ annotation:
     | '@' name '(' value ')' {
         $$= array($2 => $4);
     }
+    | '@' name '(' keyValues ')' {
+        $$= array($2 => $4);
+    }
 ;
 
 name:
@@ -34,6 +37,15 @@ name:
 value:
     T_STRING { $$= $1; }
     | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
+;
+
+keyValues:
+    keyValue
+    | keyValue ',' keyValues { $$= array_merge($1, $3); }
+;
+
+keyValue:
+    name '=' value { $$= array($1 => $3); }
 ;
 
 %%
