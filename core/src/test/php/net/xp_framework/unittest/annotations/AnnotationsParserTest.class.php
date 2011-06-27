@@ -18,18 +18,19 @@
    */
   class AnnotationsParserTest extends TestCase {
 
+    protected function parse($annotation) {
+      return create(new AnnotationsParser())->parse(new AnnotationsLexer($annotation));
+    }
+
     /**
      * Test
      *
      */
     #[@test]
     public function simpleAnnotation() {
-      $parser= new AnnotationsParser();
-      $lexer= new AnnotationsLexer('@arg');
-
       $this->assertEquals(
         array('arg' => TRUE),
-        $parser->parse($lexer)
+        $this->parse('@arg')
       );
     }
 
@@ -39,12 +40,9 @@
      */
     #[@test]
     public function twoAnnotations() {
-      $parser= new AnnotationsParser();
-      $lexer= new AnnotationsLexer('@one, @two');
-
       $this->assertEquals(
         array('one' => TRUE, 'two' => TRUE),
-        $parser->parse($lexer)
+        $this->parse('@one, @two')
       );
     }
   }
