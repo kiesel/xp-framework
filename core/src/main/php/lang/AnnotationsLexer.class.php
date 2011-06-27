@@ -61,7 +61,12 @@
         if (T_STRING == $token[0] && 1 == strlen($token[1])) {
           $this->token= ord($token[1]);
         } else {
-          $this->token= $token[0];
+          switch (strtolower($token[1])) {
+            case 'false': $this->token= AnnotationsParser::T_FALSE; break;
+            case 'true': $this->token= AnnotationsParser::T_TRUE; break;
+            case 'null': $this->token= AnnotationsParser::T_NULL; break;
+            default: $this->token= $token[0]; break;
+          }
         }
         $this->value= $token[1];
         $this->position[0]+= 0; // TBD

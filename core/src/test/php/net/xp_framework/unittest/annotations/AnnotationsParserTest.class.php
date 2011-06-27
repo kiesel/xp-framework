@@ -93,5 +93,84 @@
         $this->parse("@key(inner= 'value', second= 'anotherVal')")
       );
     }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function integerParameter() {
+      $this->assertEquals(
+        array('annotation' => array('memory' => 100)),
+        $this->parse('@annotation(memory= 100)')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function floatParameter() {
+      $this->assertEquals(
+        array('annotation' => array('time' => 0.1)),
+        $this->parse('@annotation(time= 0.1)')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function falseParameter() {
+      $this->assertEquals(
+        array('annotation' => array('time' => FALSE)),
+        $this->parse('@annotation(time= FALSE)')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function trueParameter() {
+      $this->assertEquals(
+        array('annotation' => array('time' => TRUE)),
+        $this->parse('@annotation(time= TRUE)')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function nullParameter() {
+      $this->assertEquals(
+        array('annotation' => array('time' => NULL)),
+        $this->parse('@annotation(time= NULL)')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test, @ignore('TBI')]
+    public function multilineAnnotationWithArray() {
+      $this->assertEquals(
+        array('interceptors' => array('classes' => array(
+          'net.xp_framework.unittest.core.FirstInterceptor',
+          'net.xp_framework.unittest.core.SecondInterceptor'
+        ))),
+        $this->parse("@interceptors(classes= array(
+          'net.xp_framework.unittest.core.FirstInterceptor',
+          'net.xp_framework.unittest.core.SecondInterceptor',
+        ))")
+      );
+    }
+
   }
 ?>
