@@ -6,7 +6,6 @@
 %}
 
 %token T_WORD     260
-%token T_AT       261
 %token T_STRING   307
 
 %%
@@ -17,11 +16,11 @@ start:
 
 annotations:
     annotation { $$= $1; }
-    | annotations ',' annotation { $$= array_merge($1, array($2)); }
+    | annotations ',' annotation { $$= array_merge($1, $3); }
 ;
 
 annotation:
-    T_AT name { $$= array($2 => TRUE); }
+    '@' name { $$= array($2 => TRUE); }
 ;
 
 name:

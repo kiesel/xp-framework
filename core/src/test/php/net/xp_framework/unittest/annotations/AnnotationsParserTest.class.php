@@ -23,7 +23,7 @@
      *
      */
     #[@test]
-    public function parseSimpleAnnotation() {
+    public function simpleAnnotation() {
       $parser= new AnnotationsParser();
       $lexer= new AnnotationsLexer('@arg');
 
@@ -31,7 +31,21 @@
         array('arg' => TRUE),
         $parser->parse($lexer)
       );
+    }
 
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function twoAnnotations() {
+      $parser= new AnnotationsParser();
+      $lexer= new AnnotationsLexer('@one, @two');
+
+      $this->assertEquals(
+        array('one' => TRUE, 'two' => TRUE),
+        $parser->parse($lexer)
+      );
     }
   }
 ?>
