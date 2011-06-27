@@ -67,6 +67,8 @@
         $this->position[0]+= 0; // TBD
         $this->position[1]+= strlen($this->value);
 
+        // var_dump($this->token, $this->value, '***');
+
         return $hasMore;
       }
     }

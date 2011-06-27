@@ -45,5 +45,29 @@
         $this->parse('@one, @two')
       );
     }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function multilineAnnotation() {
+      $this->assertEquals(
+        array('one' => TRUE, 'two' => TRUE),
+        $this->parse("@one , \n@two")
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function annotationWithValue() {
+      $this->assertEquals(
+        array('key' => 'value'),
+        $this->parse("@key('value')")
+      );
+    }
   }
 ?>

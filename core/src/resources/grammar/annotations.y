@@ -7,6 +7,7 @@
 
 %token T_WORD     260
 %token T_STRING   307
+%token T_CONSTANT_ENCAPSED_STRING 315
 
 %%
 
@@ -21,10 +22,18 @@ annotations:
 
 annotation:
     '@' name { $$= array($2 => TRUE); }
+    | '@' name '(' value ')' {
+        $$= array($2 => $4);
+    }
 ;
 
 name:
     T_STRING { $$= $1; }
+;
+
+value:
+    T_STRING { $$= $1; }
+    | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
 ;
 
 %%

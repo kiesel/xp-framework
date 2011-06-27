@@ -23,41 +23,53 @@
   class AnnotationsParser extends AbstractParser {
     const T_WORD= 260;
     const T_STRING= 307;
+    const T_CONSTANT_ENCAPSED_STRING= 315;
     const YY_ERRORCODE= 256;
 
     protected static $yyLhs= array(-1,
-          0,     1,     1,     2,     3, 
+          0,     1,     1,     2,     2,     3,     4,     4, 
     );
     protected static $yyLen= array(2,
-          1,     1,     3,     2,     1, 
+          1,     1,     3,     2,     5,     1,     1,     1, 
     );
     protected static $yyDefRed= array(0,
-          0,     0,     0,     2,     5,     4,     0,     3, 
+          0,     0,     0,     2,     6,     0,     0,     0,     3,     7, 
+          8,     0,     5, 
     );
     protected static $yyDgoto= array(2,
-          3,     4,     6, 
+          3,     4,     6,    12, 
     );
-    protected static $yySindex = array(          -64,
-       -306,     0,   -42,     0,     0,     0,   -64,     0, 
+    protected static $yySindex = array(          -62,
+       -304,     0,   -40,     0,     0,   -35,   -62,  -307,     0,     0, 
+          0,   -34,     0, 
     );
     protected static $yyRindex= array(            0,
-          0,     0,     3,     0,     0,     0,     0,     0, 
+          0,     0,     6,     0,     0,     1,     0,     0,     0,     0, 
+          0,     0,     0, 
     );
     protected static $yyGindex= array(0,
-          0,    -3,     0, 
+          0,     2,     0,     0, 
     );
-    protected static $yyTable = array(1,
-          5,     7,     1,     8, 
+    protected static $yyTable = array(10,
+          4,     1,     5,     7,     8,     1,    13,    11,     9,     0, 
+          0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
+          0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
+          0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
+          0,     0,     0,     0,     4, 
     );
-    protected static $yyCheck = array(64,
-        307,    44,     0,     7, 
+    protected static $yyCheck = array(307,
+          0,    64,   307,    44,    40,     0,    41,   315,     7,    -1, 
+         -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
+         -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
+         -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
+         -1,    -1,    -1,    -1,    44, 
     );
     protected static $yyFinal= 2;
     protected static $yyName= array(    
       'end-of-file', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, "','", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+      "'('", "')'", NULL, NULL, "','", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "'@'", NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
@@ -76,7 +88,8 @@
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, 'T_STRING', 
+      NULL, NULL, NULL, NULL, 'T_STRING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+      'T_CONSTANT_ENCAPSED_STRING', 
     );
 
     protected static $yyTableCount= 0, $yyNameCount= 0;
@@ -231,21 +244,32 @@
             // Actions
             switch ($yyN) {
 
-    case 1:  #line 14 "src/resources/grammar/annotations.y"
+    case 1:  #line 15 "src/resources/grammar/annotations.y"
     { $yyVal= $yyVals[0+$yyTop]; } break;
 
-    case 2:  #line 18 "src/resources/grammar/annotations.y"
+    case 2:  #line 19 "src/resources/grammar/annotations.y"
     { $yyVal= $yyVals[0+$yyTop]; } break;
 
-    case 3:  #line 19 "src/resources/grammar/annotations.y"
+    case 3:  #line 20 "src/resources/grammar/annotations.y"
     { $yyVal= array_merge($yyVals[-2+$yyTop], $yyVals[0+$yyTop]); } break;
 
-    case 4:  #line 23 "src/resources/grammar/annotations.y"
+    case 4:  #line 24 "src/resources/grammar/annotations.y"
     { $yyVal= array($yyVals[0+$yyTop] => TRUE); } break;
 
-    case 5:  #line 27 "src/resources/grammar/annotations.y"
+    case 5:  #line 25 "src/resources/grammar/annotations.y"
+    {
+        $yyVal= array($yyVals[-3+$yyTop] => $yyVals[-1+$yyTop]);
+    } break;
+
+    case 6:  #line 31 "src/resources/grammar/annotations.y"
     { $yyVal= $yyVals[0+$yyTop]; } break;
-#line 249 "-"
+
+    case 7:  #line 35 "src/resources/grammar/annotations.y"
+    { $yyVal= $yyVals[0+$yyTop]; } break;
+
+    case 8:  #line 36 "src/resources/grammar/annotations.y"
+    { $yyVal= trim($yyVals[0+$yyTop], '"\''); } break;
+#line 273 "-"
             }
                    
             $yyTop-= self::$yyLen[$yyN];
