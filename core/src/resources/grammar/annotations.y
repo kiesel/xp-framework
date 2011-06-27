@@ -12,16 +12,16 @@
 %%
 
 start:
-    annotations
+    annotations { $$= $1; }
 ;
 
 annotations:
-    annotation
-    | annotations ',' annotation
+    annotation { $$= $1; }
+    | annotations ',' annotation { $$= array_merge($1, array($2)); }
 ;
 
 annotation:
-    T_AT name
+    T_AT name { $$= array($2 => TRUE); }
 ;
 
 name:

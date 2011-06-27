@@ -232,9 +232,21 @@
             // Actions
             switch ($yyN) {
 
+    case 1:  #line 15 "src/resources/grammar/annotations.y"
+    { $yyVal= $yyVals[0+$yyTop]; } break;
+
+    case 2:  #line 19 "src/resources/grammar/annotations.y"
+    { $yyVal= $yyVals[0+$yyTop]; } break;
+
+    case 3:  #line 20 "src/resources/grammar/annotations.y"
+    { $yyVal= array_merge($yyVals[-2+$yyTop], array($yyVals[-1+$yyTop])); } break;
+
+    case 4:  #line 24 "src/resources/grammar/annotations.y"
+    { $yyVal= array($yyVals[0+$yyTop] => TRUE); } break;
+
     case 5:  #line 28 "src/resources/grammar/annotations.y"
     { $yyVal= $yyVals[0+$yyTop]; } break;
-#line 238 "-"
+#line 250 "-"
             }
                    
             $yyTop-= self::$yyLen[$yyN];
