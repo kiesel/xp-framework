@@ -1,10 +1,12 @@
 %{
   uses(
+    'lang.AnnotationsLexer'
   );
 
 %}
 
-%token T_WORD 260
+%token T_WORD     260
+%token T_STRING   307
 
 %%
 
@@ -22,7 +24,7 @@ annotation:
 ;
 
 annotationname:
-    T_WORD { $$= $1 }
+    T_STRING { $$= $1; }
 ;
 
 %%

@@ -17,4 +17,4 @@ clean:
 #	sh $(GEN)/generate.sh grammar/php.jay php5 "" xp.compiler.syntax.php > $@
 
 src/main/php/lang/AnnotationsParser.class.php: src/resources/grammar/annotations.y $(GEN)/skel/php5.skl
-	sh $(GEN)/generate.sh src/resources/grammar/annotations.y php5 "" xp.compiler.syntax.xp > $@
+	sh $(GEN)/generate.sh src/resources/grammar/annotations.y php5 "Annotations" "" > $@
