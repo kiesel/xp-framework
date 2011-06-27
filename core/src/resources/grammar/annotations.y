@@ -6,6 +6,7 @@
 %}
 
 %token T_WORD     260
+%token T_AT       261
 %token T_STRING   307
 
 %%
@@ -20,10 +21,10 @@ annotations:
 ;
 
 annotation:
-    '@' annotationname
+    T_AT name
 ;
 
-annotationname:
+name:
     T_STRING { $$= $1; }
 ;
 

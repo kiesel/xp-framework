@@ -28,7 +28,9 @@
     public function advance() {
       $token= current($this->tokens);
       next($this->tokens);
-
+      $hasMore= (NULL !== current($this->tokens));
+      var_dump($token, $hasMore);
+      
       // Find end
       if (NULL === $token) {
         $this->token= -1;
@@ -38,16 +40,16 @@
 
       // Normalize token
       if (is_string($token)) {
-        $this->token= AnnotationsParser::T_WORD;
+        $this->token= AnnotationsParser::T_AT;
         $this->value= $token;
 
-        return TRUE;
+        return $hasMore;
       }
 
       $this->token= $token[0];
       $this->value= $token[1];
 
-      return TRUE;
+      return $hasMore;
     }
   }
 ?>

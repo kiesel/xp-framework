@@ -22,6 +22,7 @@
    */
   class AnnotationsParser extends AbstractParser {
     const T_WORD= 260;
+    const T_AT= 261;
     const T_STRING= 307;
     const YY_ERRORCODE= 256;
 
@@ -37,8 +38,8 @@
     protected static $yyDgoto= array(2,
           3,     4,     6, 
     );
-    protected static $yySindex = array(          -64,
-       -306,     0,   -42,     0,     0,     0,   -64,     0, 
+    protected static $yySindex = array(         -261,
+       -306,     0,   -42,     0,     0,     0,  -261,     0, 
     );
     protected static $yyRindex= array(            0,
           0,     0,     3,     0,     0,     0,     0,     0, 
@@ -49,7 +50,7 @@
     protected static $yyTable = array(1,
           5,     7,     1,     8, 
     );
-    protected static $yyCheck = array(64,
+    protected static $yyCheck = array(261,
         307,    44,     0,     7, 
     );
     protected static $yyFinal= 2;
@@ -58,7 +59,6 @@
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, "','", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "'@'", NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
@@ -72,11 +72,12 @@
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'T_WORD', 
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'T_WORD', 
+      'T_AT', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, 'T_STRING', 
+      NULL, NULL, NULL, NULL, NULL, 'T_STRING', 
     );
 
     protected static $yyTableCount= 0, $yyNameCount= 0;
@@ -231,9 +232,9 @@
             // Actions
             switch ($yyN) {
 
-    case 5:  #line 27 "src/resources/grammar/annotations.y"
+    case 5:  #line 28 "src/resources/grammar/annotations.y"
     { $yyVal= $yyVals[0+$yyTop]; } break;
-#line 237 "-"
+#line 238 "-"
             }
                    
             $yyTop-= self::$yyLen[$yyN];
