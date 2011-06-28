@@ -27,7 +27,7 @@
     #[@test]
     public function simpleAnnotation() {
       $this->assertEquals(
-        array('arg' => TRUE),
+        array('arg' => NULL),
         $this->parse('@arg')
       );
     }
@@ -39,7 +39,7 @@
     #[@test]
     public function twoAnnotations() {
       $this->assertEquals(
-        array('one' => TRUE, 'two' => TRUE),
+        array('one' => NULL, 'two' => NULL),
         $this->parse('@one, @two')
       );
     }
@@ -51,7 +51,7 @@
     #[@test]
     public function multilineAnnotation() {
       $this->assertEquals(
-        array('one' => TRUE, 'two' => TRUE),
+        array('one' => NULL, 'two' => NULL),
         $this->parse("@one , \n@two")
       );
     }
@@ -189,7 +189,7 @@
     #[@test]
     public function phpClassKeywordAnnotation() {
       $this->assertEquals(
-        array('class' => TRUE),
+        array('class' => NULL),
         $this->parse('@class')
       );
     }
@@ -201,7 +201,7 @@
     #[@test]
     public function phpInterfaceKeywordAnnotation() {
       $this->assertEquals(
-        array('interface' => TRUE),
+        array('interface' => NULL),
         $this->parse('@interface')
       );
     }
@@ -234,6 +234,23 @@
         )),
         $this->parse("@config(key = 'value', times= 5, disabled= FALSE, null = NULL, list= array(1, 2))")
       );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function bla() {
+      $this->assertEquals(
+        NULL,
+        $this->parse("@overloaded(signatures= array(
+          array('string'),
+          array('string', 'string')
+        ))"
+      ));
+
+
     }
   }
 ?>
