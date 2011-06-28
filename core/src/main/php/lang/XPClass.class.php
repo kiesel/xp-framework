@@ -591,6 +591,7 @@
 
       $details= array(array(), array());
       $annotations= array();
+      $aparser= NULL;
       $comment= NULL;
       $members= TRUE;
       $parsed= '';
@@ -609,19 +610,14 @@
                 $parsed.= substr($tokens[$i][1], 1);
               }
               if (']' == substr(rtrim($tokens[$i][1]), -1)) {
-                ob_start();
-                $annotations= eval('return array('.preg_replace(
-                  array('/@([a-z_]+),/i', '/@([a-z_]+)\(\'([^\']+)\'\)/ie', '/@([a-z_]+)\(/i', '/([^a-z_@])([a-z_]+) *= */i'),
-                  array('\'$1\' => NULL,', '"\'$1\' => urldecode(\'".urlencode(\'$2\')."\')"', '\'$1\' => array(', '$1\'$2\' => '),
-                  trim($parsed, "[]# \t\n\r").','
-                ).');');
-                $msg= ltrim(ob_get_contents(), ini_get('error_prepend_string')."\r\n\t ");
-                if (FALSE === $annotations || $msg) {
-                  ob_end_clean();
-                  xp::gc();
-                  raise('lang.ClassFormatException', 'Parse error: '.$msg.' of "'.addcslashes($parsed, "\0..\17").'" in '.$class.(isset($tokens[$i][2]) ? ', line '.$tokens[$i][2] : ''));
+                try {
+                  if (NULL == $aparser) {
+                    $aparser= XPClass::forName('lang.AnnotationsParser')->newInstance();
+                  }
+                  $annotations= $aparser->parse(new AnnotationsLexer(trim($parsed, "[]# \t\n\r")));
+                } catch (ParseException $e) {
+                  raise('lang.ClassFormatException', 'Parse error: "'.addcslashes(trim($parsed, "[]# \t\n\r"), "\0..\17").'" in '.$class, $e);
                 }
-                ob_end_clean();
                 $parsed= '';
               }
             }

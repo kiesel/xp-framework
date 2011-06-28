@@ -15,10 +15,14 @@
     protected
       $tokens = array(),
       $tokenMap = array(
-        T_CLASS     => T_STRING,
-        T_INTERFACE => T_STRING,
-        T_LIST      => T_STRING,
-        // TBD: Add more map tokens
+        T_CLASS       => T_STRING,
+        T_INTERFACE   => T_STRING,
+        T_LIST        => T_STRING,
+        T_SELF        => T_STRING,
+        T_IMPLEMENTS  => T_STRING,
+        T_RETURN      => T_STRING,
+        // TBD: Add more map tokens; this is awkward - is there another
+        // solution?
       );
 
     public 
