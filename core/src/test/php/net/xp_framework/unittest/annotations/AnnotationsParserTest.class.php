@@ -73,6 +73,18 @@
      *
      */
     #[@test]
+    public function annotationWithStringValue() {
+      $this->assertEquals(
+        array('key' => array('This class\' annotation contains a \\')),
+        $this->parse("@key('This class\' annotation contains a \\\\')")
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
     public function annotationWithKeyValue() {
       $this->assertEquals(
         array('key' => array('key' => 'value')),
@@ -191,6 +203,18 @@
       $this->assertEquals(
         array('interface' => TRUE),
         $this->parse('@interface')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function annotationsOverwrite() {
+      $this->assertEquals(
+        array('one' => array('another')),
+        $this->parse('@one(word),@one(another)')
       );
     }
   }

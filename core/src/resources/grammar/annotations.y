@@ -32,7 +32,7 @@ annotation:
 
 name:
     T_STRING
-    | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
+    | T_CONSTANT_ENCAPSED_STRING { $$= stripcslashes(trim($1, '"\'')); }
 ;
 
 values:
@@ -54,7 +54,7 @@ scalar:
         case 'null': $$= NULL; break;
         default: $$= $1; break;
     } }
-    | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
+    | T_CONSTANT_ENCAPSED_STRING { $$= stripcslashes(trim($1, '"\'')); }
     | T_LNUMBER { $$= intval($1); }
     | T_DNUMBER { $$= floatval($1); }
 ;

@@ -292,7 +292,7 @@
     } } break;
 
     case 15:  #line 57 "src/resources/grammar/annotations.y"
-    { $yyVal= trim($yyVals[0+$yyTop], '"\''); } break;
+    { $yyVal= stripcslashes(trim($yyVals[0+$yyTop], '"\'')); } break;
 
     case 16:  #line 58 "src/resources/grammar/annotations.y"
     { $yyVal= intval($yyVals[0+$yyTop]); } break;
