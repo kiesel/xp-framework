@@ -11,18 +11,15 @@
 %token T_DNUMBER  306
 %token T_CONSTANT_ENCAPSED_STRING 315
 %token T_ARRAY    360
-%token T_FALSE    500
-%token T_TRUE     501
-%token T_NULL     502
 
 %%
 
 start:
-    annotations { $$= $1; }
+    annotations
 ;
 
 annotations:
-    annotation { $$= $1; }
+    annotation
     | annotations ',' annotation { $$= array_merge($1, $3); }
 ;
 
@@ -34,13 +31,13 @@ annotation:
 ;
 
 name:
-    T_STRING { $$= $1; }
+    T_STRING
     | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
 ;
 
 values:
     value
-    | value ',' { $$= $1; }
+    | value ','
     | value ',' values { $$= array_merge($1, $3); }
 ;
 
@@ -51,10 +48,12 @@ value:
 ;
 
 scalar:
-    T_STRING { $$= $1; }
-    | T_FALSE { $$= FALSE; }
-    | T_TRUE { $$= TRUE; }
-    | T_NULL { $$= NULL; }
+    T_STRING { switch (strtolower($1)) {
+        case 'true': $$= TRUE; break;
+        case 'false': $$= FALSE; break;
+        case 'null': $$= NULL; break;
+        default: $$= $1; break;
+    } }
     | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
     | T_LNUMBER { $$= intval($1); }
     | T_DNUMBER { $$= floatval($1); }

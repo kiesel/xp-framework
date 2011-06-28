@@ -1,9 +1,8 @@
 <?php
-
-  /* This class is part of the XP Framework
-   *
-   * $Id$
-   */
+/* This class is part of the XP Framework
+ *
+ * $Id$
+ */
 
   uses('text.parser.generic.AbstractLexer');
 
@@ -51,28 +50,16 @@
           return FALSE;
         }
 
-        // Map token
-        // if (T_STRING == $token[0] && '@' == $token[1]) {
-          // var_dump($token);
-          // $token[0]= AnnotationsParser::T_AT;
-        // }
-
         // Map single-char "words" to their own token
         if (T_STRING == $token[0] && 1 == strlen($token[1])) {
           $this->token= ord($token[1]);
         } else {
-          switch (strtolower($token[1])) {
-            case 'false': $this->token= AnnotationsParser::T_FALSE; break;
-            case 'true': $this->token= AnnotationsParser::T_TRUE; break;
-            case 'null': $this->token= AnnotationsParser::T_NULL; break;
-            default: $this->token= $token[0]; break;
-          }
+          $this->token= $token[0];
         }
+
         $this->value= $token[1];
         $this->position[0]+= 0; // TBD
         $this->position[1]+= strlen($this->value);
-
-        // var_dump($this->token, $this->value, '***');
 
         return $hasMore;
       }
