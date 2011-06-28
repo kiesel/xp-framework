@@ -1,9 +1,8 @@
 <?php
-
-  /* This class is part of the XP framework
-   *
-   * $Id$
-   */
+/* This class is part of the XP framework
+ *
+ * $Id$
+ */
 
   uses(
     'unittest.TestCase',
@@ -11,10 +10,9 @@
   );
 
   /**
-   * TestCase
+   * AnnotationsParserTest
    *
-   * @see       ...
-   * @purpose   TestCase for
+   * @see       xp://lang.AnnotationsParser
    */
   class AnnotationsParserTest extends TestCase {
 
@@ -172,5 +170,28 @@
       );
     }
 
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function phpClassKeywordAnnotation() {
+      $this->assertEquals(
+        array('class' => TRUE),
+        $this->parse('@class')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function phpInterfaceKeywordAnnotation() {
+      $this->assertEquals(
+        array('interface' => TRUE),
+        $this->parse('@interface')
+      );
+    }
   }
 ?>
