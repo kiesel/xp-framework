@@ -5,7 +5,6 @@
 
 %}
 
-%token T_WORD     260
 %token T_STRING   307
 %token T_LNUMBER  305
 %token T_DNUMBER  306
@@ -24,7 +23,7 @@ annotations:
 ;
 
 annotation:
-    '@' name { $$= array($2 => TRUE); }
+    '@' name { $$= array($2 => NULL); }
     | '@' name '(' values ')' {
         $$= array($2 => $4);
     }
@@ -38,11 +37,11 @@ name:
 values:
     value
     | value ','
-    | value ',' values { $$= array_merge($1, $3); }
+    | value ',' values { $$= array_merge((array)$1, (array)$3); }
 ;
 
 value:
-    scalar { $$= array($1); }
+    scalar
     | name '=' scalar { $$= array($1 => $3); }
     | name '=' T_ARRAY '(' values ')' { $$= array($1 => $5); }
 ;

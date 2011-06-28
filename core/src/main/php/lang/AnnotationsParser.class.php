@@ -21,7 +21,6 @@
    * @purpose  Parser implementation
    */
   class AnnotationsParser extends AbstractParser {
-    const T_WORD= 260;
     const T_STRING= 307;
     const T_LNUMBER= 305;
     const T_DNUMBER= 306;
@@ -94,15 +93,15 @@
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'T_WORD', 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, 'T_LNUMBER', 'T_DNUMBER', 'T_STRING', NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, 'T_CONSTANT_ENCAPSED_STRING', NULL, NULL, NULL, NULL, NULL, NULL, 
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+      NULL, 'T_LNUMBER', 'T_DNUMBER', 'T_STRING', NULL, NULL, NULL, NULL, NULL, NULL,
+      NULL, 'T_CONSTANT_ENCAPSED_STRING', NULL, NULL, NULL, NULL, NULL, NULL, NULL,
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'T_ARRAY', 
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'T_ARRAY',
     );
 
     protected static $yyTableCount= 0, $yyNameCount= 0;
@@ -257,33 +256,30 @@
             // Actions
             switch ($yyN) {
 
-    case 3:  #line 23 "src/resources/grammar/annotations.y"
+    case 3:  #line 22 "src/resources/grammar/annotations.y"
     { $yyVal= array_merge($yyVals[-2+$yyTop], $yyVals[0+$yyTop]); } break;
 
-    case 4:  #line 27 "src/resources/grammar/annotations.y"
-    { $yyVal= array($yyVals[0+$yyTop] => TRUE); } break;
+    case 4:  #line 26 "src/resources/grammar/annotations.y"
+    { $yyVal= array($yyVals[0+$yyTop] => NULL); } break;
 
-    case 5:  #line 28 "src/resources/grammar/annotations.y"
+    case 5:  #line 27 "src/resources/grammar/annotations.y"
     {
         $yyVal= array($yyVals[-3+$yyTop] => $yyVals[-1+$yyTop]);
     } break;
 
-    case 7:  #line 35 "src/resources/grammar/annotations.y"
-    { $yyVal= trim($yyVals[0+$yyTop], '"\''); } break;
+    case 7:  #line 34 "src/resources/grammar/annotations.y"
+    { $yyVal= stripcslashes(trim($yyVals[0+$yyTop], '"\'')); } break;
 
-    case 10:  #line 41 "src/resources/grammar/annotations.y"
-    { $yyVal= array_merge($yyVals[-2+$yyTop], $yyVals[0+$yyTop]); } break;
+    case 10:  #line 40 "src/resources/grammar/annotations.y"
+    { $yyVal= array_merge((array)$yyVals[-2+$yyTop], (array)$yyVals[0+$yyTop]); } break;
 
-    case 11:  #line 45 "src/resources/grammar/annotations.y"
-    { $yyVal= array($yyVals[0+$yyTop]); } break;
-
-    case 12:  #line 46 "src/resources/grammar/annotations.y"
+    case 12:  #line 45 "src/resources/grammar/annotations.y"
     { $yyVal= array($yyVals[-2+$yyTop] => $yyVals[0+$yyTop]); } break;
 
-    case 13:  #line 47 "src/resources/grammar/annotations.y"
+    case 13:  #line 46 "src/resources/grammar/annotations.y"
     { $yyVal= array($yyVals[-5+$yyTop] => $yyVals[-1+$yyTop]); } break;
 
-    case 14:  #line 51 "src/resources/grammar/annotations.y"
+    case 14:  #line 50 "src/resources/grammar/annotations.y"
     { switch (strtolower($yyVals[0+$yyTop])) {
         case 'true': $yyVal= TRUE; break;
         case 'false': $yyVal= FALSE; break;
@@ -291,15 +287,15 @@
         default: $yyVal= $yyVals[0+$yyTop]; break;
     } } break;
 
-    case 15:  #line 57 "src/resources/grammar/annotations.y"
+    case 15:  #line 56 "src/resources/grammar/annotations.y"
     { $yyVal= stripcslashes(trim($yyVals[0+$yyTop], '"\'')); } break;
 
-    case 16:  #line 58 "src/resources/grammar/annotations.y"
+    case 16:  #line 57 "src/resources/grammar/annotations.y"
     { $yyVal= intval($yyVals[0+$yyTop]); } break;
 
-    case 17:  #line 59 "src/resources/grammar/annotations.y"
+    case 17:  #line 58 "src/resources/grammar/annotations.y"
     { $yyVal= floatval($yyVals[0+$yyTop]); } break;
-#line 303 "-"
+#line 299 "-"
             }
                    
             $yyTop-= self::$yyLen[$yyN];

@@ -17,6 +17,7 @@
       $tokenMap = array(
         T_CLASS     => T_STRING,
         T_INTERFACE => T_STRING,
+        T_LIST      => T_STRING,
         // TBD: Add more map tokens
       );
 

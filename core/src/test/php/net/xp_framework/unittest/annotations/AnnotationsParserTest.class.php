@@ -63,7 +63,7 @@
     #[@test]
     public function annotationWithValue() {
       $this->assertEquals(
-        array('key' => array('value')),
+        array('key' => 'value'),
         $this->parse("@key('value')")
       );
     }
@@ -75,7 +75,7 @@
     #[@test]
     public function annotationWithStringValue() {
       $this->assertEquals(
-        array('key' => array('This class\' annotation contains a \\')),
+        array('key' => 'This class\' annotation contains a \\'),
         $this->parse("@key('This class\' annotation contains a \\\\')")
       );
     }
@@ -213,8 +213,26 @@
     #[@test]
     public function annotationsOverwrite() {
       $this->assertEquals(
-        array('one' => array('another')),
+        array('one' => 'another'),
         $this->parse('@one(word),@one(another)')
+      );
+    }
+
+    /**
+     * Test
+     *
+     */
+    #[@test]
+    public function complexAnnotation() {
+      $this->assertEquals(
+        array('config' => array(
+          'key' => 'value',
+          'times' => 5,
+          'disabled' => FALSE,
+          'null' => NULL,
+          'list' => array(1, 2)
+        )),
+        $this->parse("@config(key = 'value', times= 5, disabled= FALSE, null = NULL, list= array(1, 2))")
       );
     }
   }
