@@ -33,41 +33,44 @@
     const YY_ERRORCODE= 256;
 
     protected static $yyLhs= array(-1,
-          0,     1,     1,     2,     2,     3,     3,     4,     4,     5, 
-          5,     6,     6,     6,     6,     6,     6,     6, 
+          0,     1,     1,     2,     2,     3,     3,     4,     4,     4, 
+          5,     5,     5,     6,     6,     6,     6,     6,     6,     6, 
     );
     protected static $yyLen= array(2,
-          1,     1,     3,     2,     5,     1,     1,     1,     3,     1, 
-          3,     1,     1,     1,     1,     1,     1,     1, 
+          1,     1,     3,     2,     5,     1,     1,     1,     2,     3, 
+          1,     3,     6,     1,     1,     1,     1,     1,     1,     1, 
     );
     protected static $yyDefRed= array(0,
           0,     0,     0,     2,     6,     7,     0,     0,     0,     3, 
-          0,    17,    18,     0,    13,    14,    15,     0,     0,     0, 
-         10,     0,     5,     0,    12,    16,    11,     9, 
+          0,    19,    20,     0,    15,    16,    17,     0,     0,     0, 
+         11,     0,     5,     0,    14,    18,     0,    12,    10,     0, 
+          0,    13, 
     );
     protected static $yyDgoto= array(2,
           3,     4,    18,    19,    20,    21, 
     );
-    protected static $yySindex = array(          -50,
-       -300,     0,   -28,     0,     0,     0,   -23,   -50,  -305,     0, 
-          0,     0,     0,     0,     0,     0,     0,   -43,   -22,   -24, 
-          0,  -302,     0,  -305,     0,     0,     0,     0, 
+    protected static $yySindex = array(          -48,
+       -300,     0,   -27,     0,     0,     0,   -22,   -48,  -302,     0, 
+          0,     0,     0,     0,     0,     0,     0,   -42,   -20,   -21, 
+          0,  -305,     0,  -302,     0,     0,   -18,     0,     0,  -302, 
+        -17,     0, 
     );
     protected static $yyRindex= array(            0,
-          0,     0,    21,     0,     0,     0,     6,     0,     0,     0, 
-        -33,     0,     0,   -32,     0,     0,     0,     0,     0,   -19, 
-          0,     0,     0,     0,     0,     0,     0,     0, 
+          0,     0,    25,     0,     0,     0,     6,     0,     0,     0, 
+        -33,     0,     0,   -32,     0,     0,     0,     0,     0,   -15, 
+          0,     0,     0,   -14,     0,     0,     0,     0,     0,     0, 
+          0,     0, 
     );
     protected static $yyGindex= array(0,
-          0,    15,    23,     1,     0,     4, 
+          0,    22,    30,   -10,     0,    10, 
     );
     protected static $yyTable = array(12,
-         13,    11,    12,    13,    25,     4,     5,    12,    16,    14, 
-         12,    16,    26,     1,     6,     8,     9,    22,    23,    24, 
-          1,     8,    10,     7,    28,    27,     0,     6,     7,     0, 
-          0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
+         13,    25,    12,    13,    11,     4,     5,    14,    18,    26, 
+         14,    18,    14,    29,     6,     1,     8,     9,    22,    31, 
+         23,    30,    24,    32,     1,     8,     9,     6,     7,    10, 
+          7,    28,     0,     0,     0,     0,     0,     0,     0,     0, 
           0,     0,     0,     0,     0,     0,     0,     0,     0,     4, 
-          0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
+          0,     0,     0,     0,    27,     0,     0,     0,     0,     0, 
           0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
           0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
           0,     0,     0,     0,     0,     0,     0,     0,     0,     0, 
@@ -85,11 +88,11 @@
     );
     protected static $yyCheck = array(305,
         306,   307,   305,   306,   307,     0,   307,    41,    41,   315, 
-         44,    44,   315,    64,   315,    44,    40,    61,    41,    44, 
-          0,    41,     8,     1,    24,    22,    -1,    61,    61,    -1, 
-         -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
+         44,    44,   315,    24,   315,    64,    44,    40,    61,    30, 
+         41,    40,    44,    41,     0,    41,    41,    61,    61,     8, 
+          1,    22,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
          -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    44, 
-         -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
+         -1,    -1,    -1,    -1,   360,    -1,    -1,    -1,    -1,    -1, 
          -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
          -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
          -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1, 
@@ -323,35 +326,41 @@
     { $yyVal= trim($yyVals[0+$yyTop], '"\''); } break;
 
     case 9:  #line 43 "src/resources/grammar/annotations.y"
+    { $yyVal= $yyVals[-1+$yyTop]; } break;
+
+    case 10:  #line 44 "src/resources/grammar/annotations.y"
     { $yyVal= array_merge($yyVals[-2+$yyTop], $yyVals[0+$yyTop]); } break;
 
-    case 10:  #line 46 "src/resources/grammar/annotations.y"
+    case 11:  #line 48 "src/resources/grammar/annotations.y"
     { $yyVal= array($yyVals[0+$yyTop]); } break;
 
-    case 11:  #line 47 "src/resources/grammar/annotations.y"
+    case 12:  #line 49 "src/resources/grammar/annotations.y"
     { $yyVal= array($yyVals[-2+$yyTop] => $yyVals[0+$yyTop]); } break;
 
-    case 12:  #line 51 "src/resources/grammar/annotations.y"
+    case 13:  #line 50 "src/resources/grammar/annotations.y"
+    { $yyVal= array($yyVals[-5+$yyTop] => $yyVals[-1+$yyTop]); } break;
+
+    case 14:  #line 54 "src/resources/grammar/annotations.y"
     { $yyVal= $yyVals[0+$yyTop]; } break;
 
-    case 13:  #line 52 "src/resources/grammar/annotations.y"
+    case 15:  #line 55 "src/resources/grammar/annotations.y"
     { $yyVal= FALSE; } break;
 
-    case 14:  #line 53 "src/resources/grammar/annotations.y"
+    case 16:  #line 56 "src/resources/grammar/annotations.y"
     { $yyVal= TRUE; } break;
 
-    case 15:  #line 54 "src/resources/grammar/annotations.y"
+    case 17:  #line 57 "src/resources/grammar/annotations.y"
     { $yyVal= NULL; } break;
 
-    case 16:  #line 55 "src/resources/grammar/annotations.y"
+    case 18:  #line 58 "src/resources/grammar/annotations.y"
     { $yyVal= trim($yyVals[0+$yyTop], '"\''); } break;
 
-    case 17:  #line 56 "src/resources/grammar/annotations.y"
+    case 19:  #line 59 "src/resources/grammar/annotations.y"
     { $yyVal= intval($yyVals[0+$yyTop]); } break;
 
-    case 18:  #line 57 "src/resources/grammar/annotations.y"
+    case 20:  #line 60 "src/resources/grammar/annotations.y"
     { $yyVal= floatval($yyVals[0+$yyTop]); } break;
-#line 355 "-"
+#line 364 "-"
             }
                    
             $yyTop-= self::$yyLen[$yyN];

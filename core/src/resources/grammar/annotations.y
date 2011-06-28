@@ -40,11 +40,14 @@ name:
 
 values:
     value
+    | value ',' { $$= $1; }
     | value ',' values { $$= array_merge($1, $3); }
+;
 
 value:
     scalar { $$= array($1); }
     | name '=' scalar { $$= array($1 => $3); }
+    | name '=' T_ARRAY '(' values ')' { $$= array($1 => $5); }
 ;
 
 scalar:
