@@ -28,13 +28,9 @@ annotations:
 
 annotation:
     '@' name { $$= array($2 => TRUE); }
-    | '@' name '(' value ')' {
+    | '@' name '(' values ')' {
         $$= array($2 => $4);
     }
-    | '@' name '(' keyValues ')' {
-        $$= array($2 => $4);
-    }
-    | '@' name '('
 ;
 
 name:
@@ -42,7 +38,16 @@ name:
     | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
 ;
 
+values:
+    value
+    | value ',' values { $$= array_merge($1, $3); }
+
 value:
+    scalar { $$= array($1); }
+    | name '=' scalar { $$= array($1 => $3); }
+;
+
+scalar:
     T_STRING { $$= $1; }
     | T_FALSE { $$= FALSE; }
     | T_TRUE { $$= TRUE; }
@@ -50,16 +55,6 @@ value:
     | T_CONSTANT_ENCAPSED_STRING { $$= trim($1, '"\''); }
     | T_LNUMBER { $$= intval($1); }
     | T_DNUMBER { $$= floatval($1); }
-;
-
-keyValues:
-    keyValue
-    | keyValue ',' keyValues { $$= array_merge($1, $3); }
-;
-
-keyValue:
-    name '=' value { $$= array($1 => $3); }
-    | name '=' T_ARRAY '(' keyValues ')' { $$= array($1 => $5); }
 ;
 
 %%

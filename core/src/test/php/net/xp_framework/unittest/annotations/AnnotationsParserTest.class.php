@@ -65,7 +65,7 @@
     #[@test]
     public function annotationWithValue() {
       $this->assertEquals(
-        array('key' => 'value'),
+        array('key' => array('value')),
         $this->parse("@key('value')")
       );
     }
@@ -158,7 +158,7 @@
      * Test
      *
      */
-    #[@test, @ignore('TBI')]
+    #[@test]
     public function multilineAnnotationWithArray() {
       $this->assertEquals(
         array('interceptors' => array('classes' => array(
