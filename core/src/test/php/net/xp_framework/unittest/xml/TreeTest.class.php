@@ -100,7 +100,7 @@
      */
     #[@test]
     public function fromStringEncodingIso88591() {
-      $tree= Tree::fromString('<?xml version="1.0" encoding="iso-8859-1"?>
+      $tree= Tree::fromString('<?xml version="1.0" encoding="ISO-8859-1"?>
         <document><node>Some umlauts: öäü</node></document>
       ');
       
@@ -169,7 +169,7 @@
       $t= create(new Tree('unicode'))->withEncoding('iso-8859-1');
       $t->root->setContent('Hällo');
 
-      $this->assertEquals('<?xml version="1.0" encoding="iso-8859-1"?>', $t->getDeclaration());
+      $this->assertEquals('<?xml version="1.0" encoding="ISO-8859-1"?>', $t->getDeclaration());
       $this->assertEquals('<unicode>Hällo</unicode>', $this->sourceOf($t));
     }
 
@@ -195,7 +195,7 @@
       $t= create(new Tree('unicode'))->withEncoding('iso-8859-1');
       $t->root->setContent(new String('Hällo', 'iso-8859-1'));
 
-      $this->assertEquals('<?xml version="1.0" encoding="iso-8859-1"?>', $t->getDeclaration());
+      $this->assertEquals('<?xml version="1.0" encoding="ISO-8859-1"?>', $t->getDeclaration());
       $this->assertEquals('<unicode>Hällo</unicode>', $this->sourceOf($t));
     }
 
@@ -221,7 +221,7 @@
       $t= create(new Tree('unicode'))->withEncoding('iso-8859-1');
       $t->root->setContent(new String('HÃ¤llo', 'UTF-8'));
 
-      $this->assertEquals('<?xml version="1.0" encoding="iso-8859-1"?>', $t->getDeclaration());
+      $this->assertEquals('<?xml version="1.0" encoding="ISO-8859-1"?>', $t->getDeclaration());
       $this->assertEquals('<unicode>Hällo</unicode>', $this->sourceOf($t));
     }
 

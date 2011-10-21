@@ -124,7 +124,7 @@
     public function charsetPreference() {
       $this->assertEquals(
         'iso-8859-1',
-        $this->fixture->getCharset(array('iso-8859-1', 'UTF-8', 'iso-8859-15'), 'ASCII')
+        $this->fixture->getCharset(array('iso-8859-1', 'utf-8', 'iso-8859-15'), 'ASCII')
       );
     }
 
@@ -135,8 +135,8 @@
     #[@test]
     public function secondCharsetPreference() {
       $this->assertEquals(
-        'UTF-8', 
-        $this->fixture->getCharset(array('UTF-8', 'iso-8859-15'), 'ASCII')
+        'utf-8',
+        $this->fixture->getCharset(array('utf-8', 'iso-8859-15'), 'ASCII')
       );
     }
 

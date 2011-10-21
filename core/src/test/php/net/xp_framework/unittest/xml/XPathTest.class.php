@@ -239,10 +239,10 @@
      */
     #[@test]
     public function queryTreeWithDefaultEncoding() {
-      $value= new String('value öäü', 'UTF-8');
+      $value= new String('value öäü', 'utf-8');
       $xpath= new XPath($s= sprintf(
         '<document><node>%s</node></document>',
-        $value->getBytes('UTF-8')
+        $value->getBytes('utf-8')
       ));
 
       $this->assertEquals($value, new String($xpath->query('string(/document/node)'), 'utf-8'));
