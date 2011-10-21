@@ -223,11 +223,11 @@
      */
     #[@test]
     public function queryTreeWithEncoding() {
-      $value= new String('value öäü', 'ISO-8859-1');
+      $value= new String('value öäü', 'iso-8859-1');
       $xpath= new XPath(Tree::fromString(sprintf(
         '<?xml version="1.0" encoding="iso-8859-1"?>'.
         '<document><node>%s</node></document>',
-        $value->getBytes('ISO-8859-1')
+        $value->getBytes('iso-8859-1')
       )));
 
       $this->assertEquals($value, new String($xpath->query('string(/document/node)'), 'utf-8'));

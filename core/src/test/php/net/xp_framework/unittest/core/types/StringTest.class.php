@@ -22,8 +22,8 @@
      *
      */
     public function setUp() {
-      iconv_set_encoding('input_encoding', 'ISO-8859-1');
-      iconv_set_encoding('output_encoding', 'ISO-8859-1');
+      iconv_set_encoding('input_encoding', 'iso-8859-1');
+      iconv_set_encoding('output_encoding', 'iso-8859-1');
     }
 
     /**
@@ -168,7 +168,7 @@
     public function utf8String() {
       $this->assertEquals(
         new String('HÃ¤llo', 'UTF-8'),
-        new String('Hällo', 'ISO-8859-1')
+        new String('Hällo', 'iso-8859-1')
       );
     }
 

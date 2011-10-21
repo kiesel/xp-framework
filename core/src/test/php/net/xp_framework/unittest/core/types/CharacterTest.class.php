@@ -23,8 +23,8 @@
      *
      */
     public function setUp() {
-      iconv_set_encoding('input_encoding', 'ISO-8859-1');
-      iconv_set_encoding('output_encoding', 'ISO-8859-1');
+      iconv_set_encoding('input_encoding', 'iso-8859-1');
+      iconv_set_encoding('output_encoding', 'iso-8859-1');
     }
 
     /**
@@ -98,7 +98,7 @@
     public function utf8Character() {
       $this->assertEquals(
         new Character('Ã¤', 'UTF-8'),
-        new Character('ä', 'ISO-8859-1')
+        new Character('ä', 'iso-8859-1')
       );
     }
 

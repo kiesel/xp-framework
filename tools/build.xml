@@ -17,14 +17,14 @@
     </copy>
   </target>
 
-  <target name="xp.package.sources" extensionOf="package" depends="xp.setup.ivy, xp.build.number">
+  <target name="-package:xar:classes" extensionOf="package" depends="-init:configure:ivy, prepare:number:determine">
     <xar-from-system
      dir="${build.target}/classes"
      target="${build.target}/${ivy.module}-${ivy.new.revision}.xar"
     />
   </target>
   
-  <target name="xp.package.bootstrap" extensionOf="package" depends="xp.setup.ivy, xp.build.number">
+  <target name="xp.package.bootstrap" extensionOf="package" depends="-init:configure:ivy, prepare:number:determine">
     <zip
      destfile="${build.target}/${ivy.module}-bootstrap-${ivy.new.revision}.zip"
     >
