@@ -82,7 +82,15 @@
       }
       
       // Register it
-      $name= ($package ? strtr($package, '.', '·').'·' : '').substr($class, (FALSE === ($p= strrpos($class, '.')) ? 0 : $p + 1));
+      $name= NULL;
+      if (TRUE === $package) {
+        $name= strtr($class, '.', '\\');
+      } else if (NULL !== $package) {
+        $name= strtr($package, '.', '·').'·'.substr($class, (FALSE === ($p= strrpos($class, '.')) ? 0 : $p + 1));
+      } else {
+        $name= substr($class, (FALSE === ($p= strrpos($class, '.')) ? 0 : $p + 1));
+      }
+
       if (!class_exists($name, FALSE) && !interface_exists($name, FALSE)) {
         unset(xp::$registry['classloader.'.$class]);
         raise('lang.ClassFormatException', 'Class "'.$name.'" not declared in loaded file');
