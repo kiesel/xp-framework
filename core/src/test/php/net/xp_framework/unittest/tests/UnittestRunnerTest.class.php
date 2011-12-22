@@ -27,7 +27,7 @@
      *
      */
     public function setUp() {
-      $this->runner= new xp·unittest·Runner();
+      $this->runner= new \xp\unittest\Runner();
       $this->out= $this->runner->setOut(new MemoryOutputStream());
       $this->err= $this->runner->setErr(new MemoryOutputStream());
     }

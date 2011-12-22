@@ -4,7 +4,7 @@
  * $Id$ 
  */
 
-  namespace xp\unittest\source;
+  namespace xp\unittest\sources;
   $package= TRUE;
 
   /**

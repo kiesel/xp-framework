@@ -28,6 +28,8 @@
   use \StringWriter;
   use \XPClass;
   use \TestListeners;
+  use \Properties;
+  use \xp;
 
 
   /**
@@ -192,11 +194,11 @@
           } else if (strstr($args[$i], '.ini')) {
             $sources->add(new \xp\unittest\sources\PropertySource(new Properties($args[$i])));
           } else if (strstr($args[$i], xp::CLASS_FILE_EXT)) {
-            $sources->add(new \xp\unittest\sources\ClassFileSource(new File($args[$i])));
+            $sources->add(new \xp\unittest\sources\ClassFileSource(new \File($args[$i])));
           } else if (strstr($args[$i], '.**')) {
-            $sources->add(new \xp\unittest\sources\PackageSource(Package::forName(substr($args[$i], 0, -3)), TRUE));
+            $sources->add(new \xp\unittest\sources\PackageSource(\Package::forName(substr($args[$i], 0, -3)), TRUE));
           } else if (strstr($args[$i], '.*')) {
-            $sources->add(new \xp\unittest\sources\PackageSource(Package::forName(substr($args[$i], 0, -2))));
+            $sources->add(new \xp\unittest\sources\PackageSource(\Package::forName(substr($args[$i], 0, -2))));
           } else if (FALSE !== ($p= strpos($args[$i], '::'))) {
             $sources->add(new \xp\unittest\sources\ClassSource(XPClass::forName(substr($args[$i], 0, $p)), substr($args[$i], $p+ 2)));
           } else {
@@ -205,7 +207,7 @@
         }
       } catch (\Throwable $e) {
         $this->err->writeLine('*** ', $e->getMessage());
-        \xp::gc();
+        xp::gc();
         return 1;
       }
       
