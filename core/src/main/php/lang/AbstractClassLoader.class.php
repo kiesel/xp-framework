@@ -54,10 +54,14 @@
       } catch (ClassLoadingException $e) {
         xp::$registry['cl.level']--;
 
-        $decl= (NULL === $package
-          ? substr($class, (FALSE === ($p= strrpos($class, '.')) ? 0 : $p + 1))
-          : strtr($class, '.', '·')
-        );
+        $decl= NULL;
+        if (NULL === $package) {
+          $decl= substr($class, (FALSE === ($p= strrpos($class, '.')) ? 0 : $p + 1));
+        } else if (TRUE === $package) {
+          $decl= strtr($class, '.', '\\');
+        } else {
+          $decl= strtr($class, '.', '·');
+        }
 
         // If class was declared, but loading threw an exception it means
         // a "soft" dependency, one that is only required at runtime, was
