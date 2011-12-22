@@ -4,16 +4,17 @@
  * $Id$
  */
 
-  uses('xp.unittest.sources.AbstractSource', 'lang.reflect.Package');
+  namespace xp\unittest\sources;
+  $package= TRUE;
 
-  $package= 'xp.unittest.sources';
+  uses('xp.unittest.sources.AbstractSource', 'lang.reflect.Package');
 
   /**
    * Source that load tests from a package
    *
    * @purpose  Source implementation
    */
-  class xp·unittest·sources·PackageSource extends xp·unittest·sources·AbstractSource {
+  class PackageSource extends AbstractSource {
     protected
       $package    = NULL,
       $recursive  = FALSE;
@@ -24,7 +25,7 @@
      * @param   lang.reflect.Package package
      * @param   bool recursive default FALSE
      */
-    public function __construct(Package $package, $recursive= FALSE) {
+    public function __construct(\Package $package, $recursive= FALSE) {
       $this->package= $package;
       $this->recursive= $recursive;
     }
@@ -36,12 +37,12 @@
      * @param   bool recursive whether to include subpackages
      * @return  lang.XPClass[]
      */
-    protected static function testClassesIn(Package $package, $recursive) {
+    protected static function testClassesIn(\Package $package, $recursive) {
       $r= array();
       foreach ($package->getClasses() as $class) {
         if (
           !$class->isSubclassOf('unittest.TestCase') ||
-          Modifiers::isAbstract($class->getModifiers())
+          \Modifiers::isAbstract($class->getModifiers())
         ) continue;
         $r[]= $class;
       }

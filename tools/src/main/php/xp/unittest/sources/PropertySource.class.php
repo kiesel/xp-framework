@@ -4,16 +4,17 @@
  * $Id$ 
  */
 
-  uses('xp.unittest.sources.AbstractSource', 'util.Properties');
+  namespace xp\unittest\sources;
+  $package= TRUE;
 
-  $package= 'xp.unittest.sources';
+  uses('xp.unittest.sources.AbstractSource', 'util.Properties');
 
   /**
    * Source that load tests from a .ini file
    *
    * @purpose  Source implementation
    */
-  class xp·unittest·sources·PropertySource extends xp·unittest·sources·AbstractSource {
+  class PropertySource extends AbstractSource {
     protected $prop= NULL;
     protected $descr= NULL;
     
@@ -22,7 +23,7 @@
      *
      * @param   util.Properties prop
      */
-    public function __construct(Properties $prop) {
+    public function __construct(\Properties $prop) {
       $this->prop= $prop;
       $this->descr= $this->prop->readString('this', 'description', 'Tests');
     }
@@ -39,7 +40,7 @@
       do {
         if ('this' == $section) continue;   // Ignore special section
         $r= array_merge($r, $this->testCasesInClass(
-          XPClass::forName($this->prop->readString($section, 'class')),
+          \XPClass::forName($this->prop->readString($section, 'class')),
           $arguments ? $arguments : $this->prop->readArray($section, 'args')
         ));
       } while ($section= $this->prop->getNextSection());

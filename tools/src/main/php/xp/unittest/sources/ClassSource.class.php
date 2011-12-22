@@ -4,16 +4,17 @@
  * $Id$ 
  */
 
-  uses('xp.unittest.sources.AbstractSource');
+  namespace xp\unittest\sources;
+  $package= TRUE;
 
-  $package= 'xp.unittest.sources';
+  uses('xp.unittest.sources.AbstractSource');
 
   /**
    * Source that load tests from a class filename
    *
    * @purpose  Source implementation
    */
-  class xp·unittest·sources·ClassSource extends xp·unittest·sources·AbstractSource {
+  class ClassSource extends AbstractSource {
     protected $testClass= NULL;
     protected $method= NULL;
     
@@ -23,7 +24,7 @@
      * @param   lang.XPClass testClass
      * @param   string method default NULL
      */
-    public function __construct(XPClass $testClass, $method= NULL) {
+    public function __construct(\XPClass $testClass, $method= NULL) {
       $this->testClass= $testClass;
       $this->method= $method;
     }

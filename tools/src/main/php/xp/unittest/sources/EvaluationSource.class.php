@@ -4,16 +4,17 @@
  * $Id$
  */
 
-  uses('xp.unittest.sources.AbstractSource', 'io.File');
+  namespace xp\unittest\sources;
+  $package= TRUE;
 
-  $package= 'xp.unittest.sources';
+  uses('xp.unittest.sources.AbstractSource', 'io.File');
 
   /**
    * Source that dynamically creates testcases
    *
    * @purpose  Source implementation
    */
-  class xp·unittest·sources·EvaluationSource extends xp·unittest·sources·AbstractSource {
+  class EvaluationSource extends AbstractSource {
     protected static
       $uniqId    = 0;
 
@@ -27,7 +28,7 @@
      */
     public function __construct($bytes) {
       $name= 'xp.unittest.DynamicallyGeneratedTestCase·'.(self::$uniqId++);
-      $this->testClass= ClassLoader::defineClass($name, 'unittest.TestCase', array(), '{
+      $this->testClass= \ClassLoader::defineClass($name, 'unittest.TestCase', array(), '{
         #[@test] 
         public function run() { '.$bytes.' }
       }');

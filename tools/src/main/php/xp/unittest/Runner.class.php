@@ -4,7 +4,8 @@
  * $Id$ 
  */
 
-  $package= 'xp.unittest';
+  namespace xp\unittest;
+  $package= TRUE;
 
   uses(
     'xp.unittest.TestListeners',
@@ -20,6 +21,14 @@
     'util.collections.Vector',
     'util.cmd.Console'
   );
+
+  use \Console;
+  use \OutputStream;
+  use \FileOutputStream;
+  use \StringWriter;
+  use \XPClass;
+  use \TestListeners;
+
 
   /**
    * Unittest command
@@ -54,7 +63,7 @@
    * @test     xp://net.xp_framework.unittest.tests.UnittestRunnerTest
    * @purpose  Tool
    */
-  class xp暉nittest愛unner extends Object {
+  class Runner extends \Object {
     protected $out= NULL;
     protected $err= NULL;
     
@@ -125,7 +134,7 @@
      */
     protected function arg($args, $offset, $option) {
       if (!isset($args[$offset])) {
-        throw new IllegalArgumentException('Option -'.$option.' requires an argument');
+        throw new \IllegalArgumentException('Option -'.$option.' requires an argument');
       }
       return $args[$offset];
     }
@@ -154,10 +163,10 @@
       if (!$args) return $this->usage();
 
       // Setup suite
-      $suite= new TestSuite();
+      $suite= new \TestSuite();
 
       // Parse arguments
-      $sources= new Vector();
+      $sources= new \Vector();
       $listener= TestListeners::$DEFAULT;
       $arguments= array();
       try {
@@ -171,7 +180,7 @@
               ClassLoader::getDefault()->registerPath($path);
             }
           } else if ('-e' == $args[$i]) {
-            $sources->add(new xp暉nittest新ources幌valuationSource($this->arg($args, ++$i, 'e')));
+            $sources->add(new \xp\unittest\sources\EvaluationSource($this->arg($args, ++$i, 'e')));
           } else if ('-l' == $args[$i]) {
             $class= XPClass::forName($this->arg($args, ++$i, 'l'));
             $output= $this->streamWriter($this->arg($args, ++$i, 'l'));
@@ -181,22 +190,22 @@
           } else if ('-a' == $args[$i]) {
             $arguments[]= $this->arg($args, ++$i, 'a');
           } else if (strstr($args[$i], '.ini')) {
-            $sources->add(new xp暉nittest新ources感ropertySource(new Properties($args[$i])));
+            $sources->add(new \xp\unittest\sources\PropertySource(new Properties($args[$i])));
           } else if (strstr($args[$i], xp::CLASS_FILE_EXT)) {
-            $sources->add(new xp暉nittest新ources嵩lassFileSource(new File($args[$i])));
+            $sources->add(new \xp\unittest\sources\ClassFileSource(new File($args[$i])));
           } else if (strstr($args[$i], '.**')) {
-            $sources->add(new xp暉nittest新ources感ackageSource(Package::forName(substr($args[$i], 0, -3)), TRUE));
+            $sources->add(new \xp\unittest\sources\PackageSource(Package::forName(substr($args[$i], 0, -3)), TRUE));
           } else if (strstr($args[$i], '.*')) {
-            $sources->add(new xp暉nittest新ources感ackageSource(Package::forName(substr($args[$i], 0, -2))));
+            $sources->add(new \xp\unittest\sources\PackageSource(Package::forName(substr($args[$i], 0, -2))));
           } else if (FALSE !== ($p= strpos($args[$i], '::'))) {
-            $sources->add(new xp暉nittest新ources嵩lassSource(XPClass::forName(substr($args[$i], 0, $p)), substr($args[$i], $p+ 2)));
+            $sources->add(new \xp\unittest\sources\ClassSource(XPClass::forName(substr($args[$i], 0, $p)), substr($args[$i], $p+ 2)));
           } else {
-            $sources->add(new xp暉nittest新ources嵩lassSource(XPClass::forName($args[$i])));
+            $sources->add(new \xp\unittest\sources\ClassSource(XPClass::forName($args[$i])));
           }
         }
-      } catch (Throwable $e) {
+      } catch (\Throwable $e) {
         $this->err->writeLine('*** ', $e->getMessage());
-        xp::gc();
+        \xp::gc();
         return 1;
       }
       
@@ -213,13 +222,13 @@
           foreach ($tests as $test) {
             $suite->addTest($test);
           }
-        } catch (NoSuchElementException $e) {
+        } catch (\NoSuchElementException $e) {
           $this->err->writeLine('*** Warning: ', $e->getMessage());
           continue;
-        } catch (IllegalArgumentException $e) {
+        } catch (\IllegalArgumentException $e) {
           $this->err->writeLine('*** Error: ', $e->getMessage());
           return 1;
-        } catch (MethodNotImplementedException $e) {
+        } catch (\MethodNotImplementedException $e) {
           $this->err->writeLine('*** Error: ', $e->getMessage(), ': ', $e->method, '()');
           return 1;
         }

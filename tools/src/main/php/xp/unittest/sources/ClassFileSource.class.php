@@ -4,16 +4,17 @@
  * $Id$ 
  */
 
-  uses('xp.unittest.sources.AbstractSource', 'io.File');
+  namespace xp\unittest\sources;
+  $package= TRUE;
 
-  $package= 'xp.unittest.sources';
+  uses('xp.unittest.sources.AbstractSource', 'io.File');
 
   /**
    * Source that load tests from a class filename
    *
    * @purpose  Source implementation
    */
-  class xp·unittest·sources·ClassFileSource extends xp·unittest·sources·AbstractSource {
+  class ClassFileSource extends AbstractSource {
     protected $file= NULL;
     
     /**
@@ -22,7 +23,7 @@
      * @param   io.File file
      * @throws  lang.IllegalArgumentException if the given file does not exist
      */
-    public function __construct(File $file) {
+    public function __construct(\File $file) {
       if (!$file->exists()) {
         throw new IllegalArgumentException('File "'.$file->getURI().'" does not exist!');
       }
@@ -38,19 +39,19 @@
     public function testCasesWith($arguments) {
       $uri= $this->file->getURI();
       $path= dirname($uri);
-      $paths= array_flip(array_filter(array_map('realpath', xp::registry('classpath'))));
+      $paths= array_flip(array_filter(array_map('realpath', \xp::registry('classpath'))));
 
       // Search class path
       while (FALSE !== ($pos= strrpos($path, DIRECTORY_SEPARATOR))) { 
         if (isset($paths[$path])) return $this->testCasesInClass(
-          XPClass::forName(strtr(substr($uri, strlen($path)+ 1, -10), DIRECTORY_SEPARATOR, '.')),
+          \XPClass::forName(strtr(substr($uri, strlen($path)+ 1, -10), DIRECTORY_SEPARATOR, '.')),
           $arguments
         );
 
         $path= substr($path, 0, $pos); 
       }
       
-      throw new IllegalArgumentException('Cannot load class from '.$this->file->toString());
+      throw new \IllegalArgumentException('Cannot load class from '.$this->file->toString());
     }
     
     /**
