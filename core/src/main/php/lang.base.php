@@ -49,8 +49,11 @@
         // Register class name and call static initializer if available
         if (NULL === $package) {
           $name= substr($class, (FALSE === ($p= strrpos($class, '.')) ? 0 : $p + 1));
-        } else if (TRUE === $package) {
-          $name= strtr($class, '.', '\\');
+          if (!class_exists($name, FALSE) && !interface_exists($name, FALSE)) {
+
+            // Use namespaced variant of class name
+            $name= strtr($class, '.', '\\');
+          }
         } else {
           $name= strtr($class, '.', '·');
         }
