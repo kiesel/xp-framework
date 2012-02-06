@@ -6,17 +6,30 @@
     <version>5.8.4-SNAPSHOT</version>
   </parent>
 
-  <artifactId>tools</artifactId>
-  <name>XP Framework Tools</name>
+  <artifactId>core</artifactId>
+  <name>XP Framework Runtime</name>
   <packaging>xar</packaging>
 
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-xpframework-plugin</artifactId>
+        
+        <executions>
+          <execution>
+            <id>runclass</id>
+            <phase>test</phase>
+            <configuration>
+              <code>Console::writeLine('* Hello World from \'XP Framework\'.');</code>
+            </configuration>
+            <goals>
+              <goal>xp</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       
-      <plugin>
+      <!-- plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.3</version>
         <configuration>
@@ -33,7 +46,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin-->
     </plugins>
   </build>
 </project>

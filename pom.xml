@@ -1,0 +1,32 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.xp_framework</groupId>
+  <artifactId>master</artifactId>
+  <version>5.8.4-SNAPSHOT</version>
+  <name>XP Framework</name>
+  <packaging>pom</packaging>
+  
+  <properties>
+    <xp.version>${project.version}</xp.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <modules>
+    <module>tools</module>
+    <module>core</module>
+  </modules>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-xpframework-plugin</artifactId>
+          <version>1.1</version>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
