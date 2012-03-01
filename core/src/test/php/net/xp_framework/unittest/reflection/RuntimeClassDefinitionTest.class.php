@@ -101,6 +101,17 @@
     }
 
     /**
+     * Tests newinstance() on namespaced class
+     *
+     */
+    #[@test]
+    public function newInstanceOnNamespacedClass() {
+      $i= newinstance('net.xp_framework.unittest.reflection.NamespacedClass', array(), '{}');
+      $this->assertClass($i->getClass()->getClassLoader(), 'lang.DynamicClassLoader');
+      $this->assertInstanceOf('net.xp_framework.unittest.reflection.classes.NamespacedClass', $i);
+    }
+
+    /**
      * Tests Proxy
      *
      */
