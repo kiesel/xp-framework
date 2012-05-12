@@ -142,9 +142,12 @@
       if (NULL === $content) return;
 
       // Append new text child
-      if (is_scalar($content) || $content instanceof String) {
+      if (is_scalar($content)) {
+        if (0 == strlen($content)) return;
         $this->children[]= new Text($content);
-        return;
+      } else if ($content instanceof String) {
+        if (0 == $content->length()) return;
+        $this->children[]= new Text($content);
       } else if ($content instanceof CData) {
         $this->children[]= $content;
       } else if ($content instanceof PCData) {
