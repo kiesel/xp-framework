@@ -301,7 +301,7 @@
      * @return  xml.Node added child
      * @throws  lang.IllegalArgumentException in case the given argument is not a Node
      */
-    public function addChild(Node $child) {
+    public function addChild(Element $child) {
       $this->children[]= $child;
       return $child;
     }
@@ -313,7 +313,7 @@
      * @return  xml.Node this
      * @throws  lang.IllegalArgumentException in case the given argument is not a Node
      */
-    public function withChild(Node $child) {
+    public function withChild(Element $child) {
       $this->addChild($child);
       return $this;
     }

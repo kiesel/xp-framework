@@ -23,15 +23,13 @@
       $root     = NULL,
       $nodeType = NULL;
 
-    public
-      $_cnt     = NULL,
-      $_cdata   = NULL,
-      $_objs    = NULL;
-
     protected 
       $version  = '1.0',
       $encoding = 'iso-8859-1';
     
+    private
+      $stack    = NULL;
+
     /**
      * Constructor
      *
@@ -182,17 +180,8 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onStartElement($parser, $name, $attrs) {
-      $this->_cdata= '';
-
       $element= new $this->nodeType($name, NULL, $attrs);
-      if (!isset($this->_cnt)) {
-        $this->root= $element;
-        $this->_objs[1]= $element;
-        $this->_cnt= 1;
-      } else {
-        $this->_cnt++;
-        $this->_objs[$this->_cnt]= $element;
-      }
+      $this->stack[]= $element;
     }
    
     /**
@@ -203,17 +192,16 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onEndElement($parser, $name) {
-      if ($this->_cnt > 1) {
-        $node= $this->_objs[$this->_cnt];
-        $node->content= $this->_cdata;
-        $parent= $this->_objs[$this->_cnt- 1];
-        $parent->addChild($node);
-        $this->_cdata= '';
+      $element= array_pop($this->stack);
+
+      if (sizeof($this->stack) > 0) {
+        // Register popped element with parent
+        $this->stack[sizeof($this->stack)- 1]->addChild($element);
       } else {
-        $this->root->content= $this->_cdata;
-        $this->_cdata= '';
+        // This was the last element on stack, thus
+        // the root element
+        $this->root= $element;
       }
-      $this->_cnt--;
     }
 
     /**
@@ -224,7 +212,9 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onCData($parser, $cdata) {
-      $this->_cdata.= $cdata;
+      if (strlen(trim($cdata))) {
+        $this->stack[sizeof($this->stack)- 1]->addChild(new Text($cdata));
+      }
     }
 
     /**
@@ -245,6 +235,7 @@
      */
     public function onBegin($instance) {
       $this->encoding= $instance->getEncoding();
+      $this->stack= array();
     }
 
     /**
@@ -254,7 +245,7 @@
      * @param   xml.XMLFormatException exception
      */
     public function onError($instance, $exception) {
-      unset($this->_cnt, $this->_cdata, $this->_objs);
+      $this->stack= NULL;
     }
 
     /**
@@ -263,7 +254,7 @@
      * @param   xml.parser.XMLParser instance
      */
     public function onFinish($instance) {
-      unset($this->_cnt, $this->_cdata, $this->_objs);
+      $this->stack= NULL;
     }
 
     /**

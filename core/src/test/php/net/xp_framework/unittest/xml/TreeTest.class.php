@@ -89,7 +89,7 @@
         $this->assertEquals('attribute', $c->name);
         $this->assertTrue($c->hasAttribute('name'));
         $this->assertEquals('key', $c->getAttribute('name'));
-        $this->assertEquals(0, sizeof($c->children));
+        $this->assertEquals(1, sizeof($c->children));
         $this->assertEquals('value', $c->getContent());
       }
     }
@@ -133,7 +133,7 @@
     #[@test]
     public function singleElement() {
       $tree= Tree::fromString('<document empty="false">Content</document>');
-      $this->assertEquals(0, sizeof($tree->root->children));
+      $this->assertEquals(1, sizeof($tree->root->children));
       $this->assertEquals('Content', $tree->root->getContent());
       $this->assertEquals('false', $tree->root->getAttribute('empty'));
     }
