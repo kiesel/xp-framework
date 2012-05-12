@@ -8,6 +8,10 @@
   uses(
     'xml.PCData',
     'xml.CData',
+    'xml.Element',
+    'xml.Text',
+    // 'xml.Comment',
+    'xml.Element',
     'xml.XMLFormatException'
   );
   
@@ -23,14 +27,14 @@
    * @see   xp://xml.Tree#addChild
    * @test  xp://net.xp_framework.unittest.xml.NodeTest
    */
-  class Node extends Object {
+  class Node extends Object implements Element {
     const
       XML_ILLEGAL_CHARS   = XML_ILLEGAL_CHARS;
 
     public 
       $name         = '',
       $attribute    = array(),
-      $content      = NULL,
+      $content      = NULL,  // TODO: Remove obsolete member
       $children     = array();
 
     /**
@@ -135,17 +139,17 @@
      * @throws  xml.XMLFormatException in case content contains illegal characters
      */
     public function setContent($content) {
+      if (NULL === $content) return;
 
-      // Scan the given string for illegal characters.
-      if (is_string($content)) {  
-        if (strlen($content) > ($p= strcspn($content, XML_ILLEGAL_CHARS))) {
-          throw new XMLFormatException(
-            'Content contains illegal character at position '.$p. ' / chr('.ord($content{$p}).')'
-          );
-        }
+      // Append new text child
+      if (is_scalar($content) || $content instanceof String) {
+        $this->children[]= new Text($content);
+        return;
+      } else if ($content instanceof CData) {
+        $this->children[]= $content;
+      } else if ($content instanceof PCData) {
+        $this->children[]= $content;
       }
-      
-      $this->content= $content;
     }
     
     /**
@@ -154,7 +158,15 @@
      * @return  string content
      */
     public function getContent() {
-      return $this->content;
+      $content= '';
+
+      foreach ($this->children as $child) {
+        if (!$child instanceof Text) continue;
+
+        $content.= $child->getContent();
+      }
+
+      return $content;
     }
 
     /**
@@ -235,32 +247,6 @@
       $xml= $inset.'<'.$this->name;
       $conv= 'iso-8859-1' != $encoding;
       
-      if ('string' == ($type= gettype($this->content))) {
-        $content= $conv
-          ? iconv('iso-8859-1', $encoding, htmlspecialchars($this->content, ENT_COMPAT, 'iso-8859-1'))
-          : htmlspecialchars($this->content, ENT_COMPAT, 'iso-8859-1')
-        ;
-      } else if ('float' == $type) {
-        $content= ($this->content - floor($this->content) == 0)
-          ? number_format($this->content, 0, NULL, NULL)
-          : $this->content
-        ;
-      } else if ($this->content instanceof PCData) {
-        $content= $conv
-          ? iconv('iso-8859-1', $encoding, $this->content->pcdata)
-          : $this->content->pcdata
-        ;
-      } else if ($this->content instanceof CData) {
-        $content= '<![CDATA['.str_replace(']]>', ']]]]><![CDATA[>', $conv
-          ? iconv('iso-8859-1', $encoding, $this->content->cdata)
-          : $this->content->cdata
-        ).']]>';
-      } else if ($this->content instanceof String) {
-        $content= htmlspecialchars($this->content->getBytes($encoding), ENT_COMPAT, $encoding);
-      } else {
-        $content= $this->content; 
-      }
-      
       if (INDENT_NONE === $indent) {
         foreach ($this->attribute as $key => $value) {
           $xml.= ' '.$key.'="'.htmlspecialchars(
@@ -269,7 +255,7 @@
             'iso-8859-1'
           ).'"';
         }
-        $xml.= '>'.$content;
+        $xml.= '>';
         foreach ($this->children as $child) {
           $xml.= $child->getSource($indent, $encoding, $inset);
         }
@@ -288,19 +274,21 @@
         }
 
         // No content and no children => close tag
-        if (0 == strlen($content)) {
-          if (!$this->children) return $xml."/>\n";
-          $xml.= '>';
-        } else {
-          $xml.= '>'.($indent ? "\n  ".$inset.$content : trim($content));
-        }
+        if (!$this->children) return $xml."/>\n";
+        $xml.= '>'.($indent ? "\n" : '');
 
-        if ($this->children) {
-          $xml.= ($indent ? '' : $inset)."\n";
-          foreach ($this->children as $child) {
-            $xml.= $child->getSource($indent, $encoding, $inset.'  ');
+        // Handle special case: only one child, child is Text => apply special
+        // formatting rules (no indent, direct inlined content)
+        if (1 == sizeof($this->children) /* && $this->children[0] instanceof Text */) {
+          $xml.= $this->children[0]->getSource(INDENT_NONE, $encoding);
+        } else {
+          if ($this->children) {
+            $xml.= ($indent ? '' : $inset)."\n";
+            foreach ($this->children as $child) {
+              $xml.= $child->getSource($indent, $encoding, $inset.'  ');
+            }
+            $xml= ($indent ? substr($xml, 0, -1) : $xml).$inset;
           }
-          $xml= ($indent ? substr($xml, 0, -1) : $xml).$inset;
         }
         return $xml.($indent ? "\n".$inset : '').'</'.$this->name.">\n";
       }

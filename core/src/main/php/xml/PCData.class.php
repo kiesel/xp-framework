@@ -4,6 +4,8 @@
  * $Id$
  */
 
+  uses('xml.Element');
+
   /**
    * PCData allows to insert literal XML into a nodes contents.
    *
@@ -26,7 +28,7 @@
    *
    * @purpose  Wrapper
    */
-  class PCData extends Object {
+  class PCData extends Object implements Element {
     public $pcdata= '';
       
     /**
@@ -36,6 +38,18 @@
      */
     public function __construct($pcdata) {
       $this->pcdata= $pcdata;
+    }
+
+    /**
+     * Retrieve source representation
+     *
+     * @param   int indent default INDENT_WRAPPED
+     * @param   string encoding default "iso-8859-1"
+     * @param   string inset default ""
+     * @return  string
+     */
+    public function getSource($indent= INDENT_WRAPPED, $encoding= 'iso-8859-1', $inset= '') {
+      return $this->pcdata;
     }
 
     /**
