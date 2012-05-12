@@ -278,5 +278,24 @@
       $this->assertEquals('document', $tree->root->getName());
       $this->assertEquals('Some umlauts: צהü', $tree->root->children[0]->getContent());
     }
+
+    #[@test]
+    public function parseMixedHTML() {
+      $tree= new Tree();
+      create(new XMLParser('iso-8859-1'))->withCallback($tree)->parse(trim('
+        <?xml version="1.0" encoding="utf-8"?>
+        <html>
+          <body>
+            Hello
+            <br/>
+            World!
+          </body>
+        </html>
+      '));
+
+      $this->assertEquals(3, sizeof($tree->root->children[0]->children));
+      $this->assertEquals('Hello', $tree->root->children[0]->children[0]->getContent());
+      $this->assertEquals('World!', $tree->root->children[0]->children[2]->getContent());
+    }
   }
 ?>

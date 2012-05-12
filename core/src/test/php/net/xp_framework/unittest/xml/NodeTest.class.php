@@ -267,5 +267,40 @@
         }'), 'node'))
       );
     }
+
+    /**
+     * Test two nodes with same texts are equal
+     *
+     */
+    #[@test]
+    public function equalsWithEqualText() {
+      $this->assertEquals(
+        new Node('hello', 'World'),
+        new Node('hello', 'World')
+      );
+    }
+
+    /**
+     * Test two nodes with different texts are not equal
+     *
+     */
+    #[@test]
+    public function notEqualsWithDifferentText() {
+      $this->assertNotEquals(
+        new Node('hello', 'World'),
+        new Node('hello', 'Moon')
+      );
+    }
+
+    #[@test]
+    public function setContentErasesPreviousChildren() {
+      $node= new Node('node');
+      $node->withChild(new Node('child1'))
+        ->withChild(new Node('child2'));
+
+      $node->setContent('Hello World');
+      $this->assertEquals(1, sizeof($node->children));
+      $this->assertEquals('Hello World', $node->getContent());
+    }
   }
 ?>

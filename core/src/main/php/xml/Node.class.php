@@ -139,6 +139,7 @@
      * @throws  xml.XMLFormatException in case content contains illegal characters
      */
     public function setContent($content) {
+      $this->clearChildren();
       if (NULL === $content) return;
 
       // Append new text child
@@ -152,6 +153,8 @@
         $this->children[]= $content;
       } else if ($content instanceof PCData) {
         $this->children[]= $content;
+      } else {
+        throw new IllegalArgumentException(__METHOD__.'() does not accept '.xp::typeOf($content));
       }
     }
     
@@ -170,6 +173,14 @@
       }
 
       return $content;
+    }
+
+    /**
+     * Clear children
+     *
+     */
+    private function clearChildren() {
+      $this->children= array();
     }
 
     /**
@@ -283,7 +294,7 @@
         // Handle special case: only one child, child is Text => apply special
         // formatting rules (no indent, direct inlined content)
         if (1 == sizeof($this->children) /* && $this->children[0] instanceof Text */) {
-          $xml.= $this->children[0]->getSource(INDENT_NONE, $encoding);
+          $xml.= $this->children[0]->getSource($indent, $encoding);
         } else {
           if ($this->children) {
             $xml.= ($indent ? '' : $inset)."\n";
@@ -341,15 +352,18 @@
       foreach ($this->attribute as $name => $value) {
         $a.= ' @'.$name.'= '.xp::stringOf($value);
       }
-      $s= $this->getClassName().'('.$this->name.$a.') {';
-      if (!$this->children) {
-        $s.= NULL === $this->content ? ' ' : ' '.xp::stringOf($this->content).' ';
-      } else {
-        $s.= NULL === $this->content ? "\n" : "\n  ".xp::stringOf($this->content)."\n";
-        foreach ($this->children as $child) {
-          $s.= '  '.str_replace("\n", "\n  ", xp::stringOf($child))."\n";
-        }
+      $s= $this->getClassName().'('.$this->name.$a.") {";
+      foreach ($this->children as $child) {
+        $s.= '  '.$child->toString()."\n";
       }
+      // if (!$this->children) {
+      //   $s.= NULL === $this->content ? ' ' : ' '.xp::stringOf($this->content).' ';
+      // } else {
+      //   $s.= NULL === $this->content ? "\n" : "\n  ".xp::stringOf($this->content)."\n";
+      //   foreach ($this->children as $child) {
+      //     $s.= '  '.str_replace("\n", "\n  ", xp::stringOf($child))."\n";
+      //   }
+      // }
       return $s.'}';
     }
   }

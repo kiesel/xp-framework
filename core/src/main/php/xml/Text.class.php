@@ -48,7 +48,7 @@
         );
       }
 
-      $this->content= $content;
+      $this->content= trim($content);
     }
 
     /**
@@ -74,5 +74,9 @@
         ENT_COMPAT,
         $encoding
       );
+    }
+
+    public function toString() {
+      return $this->getClassName().'{"'.$this->getContent().'"}';
     }
   }
