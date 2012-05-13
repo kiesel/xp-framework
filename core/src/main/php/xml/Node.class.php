@@ -6,7 +6,7 @@
  */
 
   uses(
-    'xml.PCData',
+    'xml.Fragment',
     'xml.CData',
     'xml.Element',
     'xml.Text',
@@ -151,7 +151,7 @@
         $this->children[]= new Text($content);
       } else if ($content instanceof CData) {
         $this->children[]= $content;
-      } else if ($content instanceof PCData) {
+      } else if ($content instanceof Fragment) {
         $this->children[]= $content;
       } else {
         throw new IllegalArgumentException(__METHOD__.'() does not accept '.xp::typeOf($content));

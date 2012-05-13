@@ -7,7 +7,8 @@
   uses(
     'unittest.TestCase',
     'lang.types.String',
-    'xml.Node'
+    'xml.Node',
+    'xml.PCData'
   );
 
   /**
@@ -292,6 +293,10 @@
       );
     }
 
+    /**
+     * Adding new content should remove all existing
+     *
+     */
     #[@test]
     public function setContentErasesPreviousChildren() {
       $node= new Node('node');
@@ -303,6 +308,10 @@
       $this->assertEquals('Hello World', $node->getContent());
     }
 
+    /**
+     * Adding text node adds text node
+     *
+     */
     #[@test]
     public function addedTextNodeAddsText() {
       $node= new Node('document');
@@ -310,6 +319,18 @@
       $node->addChild(new Text('World'));
 
       $this->assertEquals('<document>Hello World</document>', $node->getSource(INDENT_NONE));
+    }
+
+    /**
+     * Test xml.Fragment just passed on
+     *
+     */
+    #[@test]
+    public function nodeWithFragmentMayContainIllegalStuff() {
+      $node= new Node('document');
+      $node->addChild(new Fragment('<just/><some><tag/>'));  // Intentionally broken
+
+      $this->assertEquals('<document><just/><some><tag/></document>', $node->getSource(INDENT_NONE));
     }
   }
 ?>
