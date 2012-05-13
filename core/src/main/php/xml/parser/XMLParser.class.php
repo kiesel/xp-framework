@@ -46,7 +46,7 @@
      *
      * @param   xml.parser.ParserCallback callback
      */
-    public function setCallback($callback) {
+    public function setCallback(ParserCallback $callback) {
       $this->callback= $callback;
     }
 
@@ -56,7 +56,7 @@
      * @param   xml.parser.ParserCallback callback
      * @return  xml.parser.XMLParser this
      */
-    public function withCallback($callback) {
+    public function withCallback(ParserCallback $callback) {
       $this->callback= $callback;
       return $this;
     }

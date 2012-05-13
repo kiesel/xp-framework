@@ -3,37 +3,38 @@
  *
  * $Id$
  */
-	uses(
-		'xml.Tree', 
-		'xml.Node',
-		'xml.parser.ParserCallback'
-	);
+  uses(
+    'xml.Tree',
+    'xml.Node',
+    'xml.parser.ParserCallback'
+  );
 
-	/**
-	 * Parse XML documents into Tree objects
-	 *
-	 */
+  /**
+   * Parse XML documents into Tree objects
+   *
+   */
   class TreeParser extends Object implements ParserCallback {
-    private $stack	= NULL;
-    private $root		= NULL;
-    private $treeClass= 'Tree';
-    private $nodeClass= 'Node';
+    private $stack      = NULL;
+    private $root       = NULL;
+    private $treeClass  = 'Tree';
+    private $nodeClass  = 'Node';
+    private $cdata      = '';
 
     public function setTreeClass(XPClass $c) {
-    	$this->treeClass= $c->getSimpleName();
+      $this->treeClass= $c->getSimpleName();
     }
 
     public function setNodeClass(XPClass $c) {
-    	$this->nodeClass= $c->getSimpleName();
+      $this->nodeClass= $c->getSimpleName();
     }
 
     private function _tree(Node $root) {
-    	$t= new $this->treeClass();
-    	return $t->withRoot($root);
+      $t= new $this->treeClass();
+      return $t->withRoot($root);
     }
 
     private function _node($name, $attrs) {
-    	return new $this->nodeClass($name, NULL, $attrs);
+      return new $this->nodeClass($name, NULL, $attrs);
     }
 
     /**
@@ -45,8 +46,17 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onStartElement($parser, $name, $attrs) {
+      $this->processCData();
+
       $element= $this->_node($name, $attrs);
       $this->stack[]= $element;
+    }
+
+    private function processCData() {
+      if ('' != $this->cdata) {
+        $this->stack[sizeof($this->stack)- 1]->addChild(new Text($this->cdata));
+        $this->cdata= '';
+      }
     }
    
     /**
@@ -57,8 +67,9 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onEndElement($parser, $name) {
-      $element= array_pop($this->stack);
+      $this->processCData();
 
+      $element= array_pop($this->stack);
       if (sizeof($this->stack) > 0) {
         // Register popped element with parent
         $this->stack[sizeof($this->stack)- 1]->addChild($element);
@@ -78,7 +89,7 @@
      */
     public function onCData($parser, $cdata) {
       if (strlen(trim($cdata))) {
-        $this->stack[sizeof($this->stack)- 1]->addChild(new Text($cdata));
+        $this->cdata.= $cdata;
       }
     }
 
@@ -90,6 +101,8 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onDefault($parser, $data) {
+      $this->processCData();
+
       // NOOP
       if ('<!--' == substr($data, 0, 4)) {
         $this->stack[sizeof($this->stack)- 1]->addChild(new Comment($data));
@@ -126,9 +139,9 @@
     }
 
     public function getTree() {
-    	$tree= $this->_tree($this->root);
-    	$this->root= NULL;
-    	return $tree;
+      $tree= $this->_tree($this->root);
+      $this->root= NULL;
+      return $tree;
     }
   }
 ?>
