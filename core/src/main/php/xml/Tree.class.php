@@ -6,7 +6,7 @@
  
   uses(
     'xml.parser.XMLParser',
-    'xml.parser.ParserCallback',
+    'xml.parser.TreeParser',
     'xml.Node',
     'xml.Element',
     'xml.Text',
@@ -22,7 +22,7 @@
    * @see      xp://xml.parser.XMLParser
    * @purpose  Tree
    */
-  class Tree extends Object implements ParserCallback {
+  class Tree extends Object {
     public 
       $root     = NULL,
       $nodeType = NULL;
@@ -31,9 +31,6 @@
       $version  = '1.0',
       $encoding = 'iso-8859-1';
     
-    private
-      $stack    = NULL;
-
     /**
      * Constructor
      *
@@ -133,12 +130,14 @@
      */
     public static function fromString($string, $c= __CLASS__) {
       $parser= new XMLParser();
-      $tree= new $c();
+      $treeparser= new TreeParser();
+      $treeparser->setTreeClass(new XPClass($c));
 
-      $parser->setCallback($tree);
+      $parser->setCallback($treeparser);
       $parser->parse($string, 1);
 
       // Fetch actual encoding from parser
+      $tree= $treeparser->getTree();
       $tree->setEncoding($parser->getEncoding());
 
       delete($parser);
@@ -160,108 +159,21 @@
      */ 
     public static function fromFile($file, $c= __CLASS__) {
       $parser= new XMLParser();
-      $tree= new $c();
+      $treeparser= new TreeParser();
+      $treeparser->setTreeClass(new XPClass($c));
       
-      $parser->setCallback($tree);
+      $parser->setCallback($treeparser);
       $file->open(FILE_MODE_READ);
       $string= $file->read($file->size());
       $file->close();
       $parser->parse($string);
 
       // Fetch actual encoding from parser
+      $tree= $treeparser->getTree();
       $tree->setEncoding($parser->getEncoding());
 
       delete($parser);
       return $tree;
-    }
-    
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   resource parser
-     * @param   string name
-     * @param   string attrs
-     * @see     xp://xml.parser.XMLParser
-     */
-    public function onStartElement($parser, $name, $attrs) {
-      $element= new $this->nodeType($name, NULL, $attrs);
-      $this->stack[]= $element;
-    }
-   
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   resource parser
-     * @param   string name
-     * @see     xp://xml.parser.XMLParser
-     */
-    public function onEndElement($parser, $name) {
-      $element= array_pop($this->stack);
-
-      if (sizeof($this->stack) > 0) {
-        // Register popped element with parent
-        $this->stack[sizeof($this->stack)- 1]->addChild($element);
-      } else {
-        // This was the last element on stack, thus
-        // the root element
-        $this->root= $element;
-      }
-    }
-
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   resource parser
-     * @param   string cdata
-     * @see     xp://xml.parser.XMLParser
-     */
-    public function onCData($parser, $cdata) {
-      if (strlen(trim($cdata))) {
-        $this->stack[sizeof($this->stack)- 1]->addChild(new Text($cdata));
-      }
-    }
-
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   resource parser
-     * @param   string data
-     * @see     xp://xml.parser.XMLParser
-     */
-    public function onDefault($parser, $data) {
-      // NOOP
-      if ('<!--' == substr($data, 0, 4)) {
-        $this->stack[sizeof($this->stack)- 1]->addChild(new Comment($data));
-      }
-    }
-
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   xml.parser.XMLParser instance
-     */
-    public function onBegin($instance) {
-      $this->encoding= $instance->getEncoding();
-      $this->stack= array();
-    }
-
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   xml.parser.XMLParser instance
-     * @param   xml.XMLFormatException exception
-     */
-    public function onError($instance, $exception) {
-      $this->stack= NULL;
-    }
-
-    /**
-     * Callback function for XMLParser
-     *
-     * @param   xml.parser.XMLParser instance
-     */
-    public function onFinish($instance) {
-      $this->stack= NULL;
     }
 
     /**
