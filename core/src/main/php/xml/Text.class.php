@@ -76,6 +76,11 @@
       );
     }
 
+    /**
+     * Retrieve string representation
+     *
+     * @return   string
+     */
     public function toString() {
       return $this->getClassName().'{"'.$this->getContent().'"}';
     }

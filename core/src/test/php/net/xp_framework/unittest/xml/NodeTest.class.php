@@ -302,5 +302,14 @@
       $this->assertEquals(1, sizeof($node->children));
       $this->assertEquals('Hello World', $node->getContent());
     }
+
+    #[@test]
+    public function addedTextNodeAddsText() {
+      $node= new Node('document');
+      $node->addChild(new Text('Hello'));
+      $node->addChild(new Text('World'));
+
+      $this->assertEquals('<document>Hello World</document>', $node->getSource(INDENT_NONE));
+    }
   }
 ?>

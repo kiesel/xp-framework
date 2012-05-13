@@ -279,6 +279,10 @@
       $this->assertEquals('Some umlauts: צהü', $tree->root->children[0]->getContent());
     }
 
+    /**
+     * Test parsing of markup-style XML
+     *
+     */
     #[@test]
     public function parseMixedHTML() {
       $tree= new Tree();
@@ -296,6 +300,23 @@
       $this->assertEquals(3, sizeof($tree->root->children[0]->children));
       $this->assertEquals('Hello', $tree->root->children[0]->children[0]->getContent());
       $this->assertEquals('World!', $tree->root->children[0]->children[2]->getContent());
+    }
+
+    /**
+     * Test comments parsing
+     *
+     */
+    #[@test]
+    public function parseComment() {
+      $tree= Tree::fromString('<?xml version="1.0" encoding="utf-8"?>
+        <document>
+          <!-- This is a comment -->
+          <message>Hello World</message>
+        </document>
+      ');
+
+      $this->assertInstanceOf('xml.Comment', $tree->root->children[0]);
+      $this->assertEquals('This is a comment', $tree->root->children[0]->getComment());
     }
   }
 ?>

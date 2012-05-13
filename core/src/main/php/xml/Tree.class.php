@@ -6,8 +6,12 @@
  
   uses(
     'xml.parser.XMLParser',
+    'xml.parser.ParserCallback',
     'xml.Node',
-    'xml.parser.ParserCallback'
+    'xml.Element',
+    'xml.Text',
+    'xml.Comment',
+    'xml.Element'
   );
  
   /**
@@ -226,6 +230,9 @@
      */
     public function onDefault($parser, $data) {
       // NOOP
+      if ('<!--' == substr($data, 0, 4)) {
+        $this->stack[sizeof($this->stack)- 1]->addChild(new Comment($data));
+      }
     }
 
     /**

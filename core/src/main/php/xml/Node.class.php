@@ -10,7 +10,7 @@
     'xml.CData',
     'xml.Element',
     'xml.Text',
-    // 'xml.Comment',
+    'xml.Comment',
     'xml.Element',
     'xml.XMLFormatException'
   );
