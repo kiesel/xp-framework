@@ -129,19 +129,10 @@
      * @throws  xml.XMLFormatException in case of a parser error
      */
     public static function fromString($string, $c= __CLASS__) {
-      $parser= new XMLParser();
-      $treeparser= new TreeParser();
-      $treeparser->setTreeClass(new XPClass($c));
+      $tp= new TreeParser();
+      $tp->setTreeClass(new XPClass($c));
 
-      $parser->setCallback($treeparser);
-      $parser->parse($string, 1);
-
-      // Fetch actual encoding from parser
-      $tree= $treeparser->getTree();
-      $tree->setEncoding($parser->getEncoding());
-
-      delete($parser);
-      return $tree;
+      return $tp->parse($string, 1);
     }
     
     /**

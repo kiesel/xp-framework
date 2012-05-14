@@ -19,6 +19,7 @@
     private $treeClass  = 'Tree';
     private $nodeClass  = 'Node';
     private $cdata      = '';
+    private $targetEncoding= 'iso-8859-1';
 
     public function setTreeClass(XPClass $c) {
       $this->treeClass= $c->getSimpleName();
@@ -28,13 +29,33 @@
       $this->nodeClass= $c->getSimpleName();
     }
 
-    private function _tree(Node $root) {
-      $t= new $this->treeClass();
-      return $t->withRoot($root);
-    }
-
     private function _node($name, $attrs) {
       return new $this->nodeClass($name, NULL, $attrs);
+    }
+
+    public function setTargetEncoding($e) {
+      $this->targetEncoding= $e;
+    }
+
+    public function getTargetEncoding() {
+      return $this->targetEncoding;
+    }
+
+    public function withTargetEncoding($e) {
+      $this->setTargetEncoding($e);
+      return $this;
+    }
+
+    public function parse($text) {
+      $xml= new XMLParser($this->targetEncoding);
+      $xml->withCallback($this)->parse($text);
+
+      $tree= create(new $this->treeClass())
+        ->withRoot($this->root)
+        ->withEncoding($xml->getEncoding());
+
+      $this->root= NULL;
+      return $tree;
     }
 
     /**
@@ -53,12 +74,12 @@
     }
 
     private function processCData() {
-      if ('' != $this->cdata) {
+      if ('' != trim($this->cdata)) {
         $this->stack[sizeof($this->stack)- 1]->addChild(new Text($this->cdata));
-        $this->cdata= '';
       }
+      $this->cdata= '';
     }
-   
+
     /**
      * Callback function for XMLParser
      *
@@ -88,9 +109,7 @@
      * @see     xp://xml.parser.XMLParser
      */
     public function onCData($parser, $cdata) {
-      if (strlen(trim($cdata))) {
-        $this->cdata.= $cdata;
-      }
+      $this->cdata.= $cdata;
     }
 
     /**
@@ -136,12 +155,6 @@
      */
     public function onFinish($instance) {
       $this->stack= NULL;
-    }
-
-    public function getTree() {
-      $tree= $this->_tree($this->root);
-      $this->root= NULL;
-      return $tree;
     }
   }
 ?>

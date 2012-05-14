@@ -48,7 +48,7 @@
         );
       }
 
-      $this->content= trim($content);
+      $this->content= $content;
     }
 
     /**

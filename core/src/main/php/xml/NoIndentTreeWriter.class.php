@@ -40,7 +40,7 @@
     }
 
     public function writeText(Text $text) {
-      $this->out->write(htmlspecialchars(trim($text->getContent())));
+      $this->out->write(htmlspecialchars($text->getContent()));
     }
   }
 

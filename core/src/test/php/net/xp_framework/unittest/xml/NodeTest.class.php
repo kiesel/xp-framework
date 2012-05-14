@@ -318,7 +318,7 @@
       $node->addChild(new Text('Hello'));
       $node->addChild(new Text('World'));
 
-      $this->assertEquals('<document>Hello World</document>', $node->getSource(INDENT_NONE));
+      $this->assertEquals('<document>HelloWorld</document>', $node->getSource(INDENT_NONE));
     }
 
     /**

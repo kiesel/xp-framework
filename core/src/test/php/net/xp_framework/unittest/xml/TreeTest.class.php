@@ -249,12 +249,12 @@
      */
     #[@test]
     public function parseIntoUtf8() {
-      $tp= new TreeParser();
-      create(new XMLParser('utf-8'))->withCallback($tp)->parse(trim('
+      $tree= create(new TreeParser())
+        ->withTargetEncoding('utf-8')
+        ->parse(trim('
         <?xml version="1.0" encoding="UTF-8"?>
         <document><node>Some umlauts: öäü</node></document>
       '));
-      $tree= $tp->getTree();
       
       $this->assertEquals('utf-8', $tree->getEncoding());
       $this->assertEquals(1, sizeof($tree->root->children));
@@ -268,12 +268,12 @@
      */
     #[@test]
     public function parseIntoIso() {
-      $tp= new TreeParser();
-      create(new XMLParser('iso-8859-1'))->withCallback($tp)->parse(trim('
+      $tree= create(new TreeParser())
+        ->withTargetEncoding('iso-8859-1')
+        ->parse(trim('
         <?xml version="1.0" encoding="UTF-8"?>
         <document><node>Some umlauts: öäü</node></document>
       '));
-      $tree= $tp->getTree();
       
       $this->assertEquals('iso-8859-1', $tree->getEncoding());
       $this->assertEquals(1, sizeof($tree->root->children));
@@ -287,8 +287,7 @@
      */
     #[@test]
     public function parseMixedHTML() {
-      $tp= new TreeParser();
-      create(new XMLParser('iso-8859-1'))->withCallback($tp)->parse(trim('
+      $tree= create(new TreeParser())->parse(trim('
         <?xml version="1.0" encoding="utf-8"?>
         <html>
           <body>
@@ -298,11 +297,10 @@
           </body>
         </html>
       '));
-      $tree= $tp->getTree();
 
       $this->assertEquals(3, sizeof($tree->root->children[0]->children));
-      $this->assertEquals('Hello', $tree->root->children[0]->children[0]->getContent());
-      $this->assertEquals('World!', $tree->root->children[0]->children[2]->getContent());
+      $this->assertEquals('Hello', trim($tree->root->children[0]->children[0]->getContent()));
+      $this->assertEquals('World!', trim($tree->root->children[0]->children[2]->getContent()));
     }
 
     /**

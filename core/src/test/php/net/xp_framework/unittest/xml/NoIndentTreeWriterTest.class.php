@@ -81,7 +81,7 @@
     #[@test]
     public function treeWithContentAndSubnodes() {
       $this->assertEquals(
-        '<?xml version="1.0" encoding="iso-8859-1"?>'."\n".'<document>Hello <b>to the</b> World!</document>',
+        '<?xml version="1.0" encoding="iso-8859-1"?>'."\n".'<document>Hello <b>to the      </b> World!</document>',
         $this->outputFor(Tree::fromString('<document>Hello <b>to the      </b> World!</document>'))
       );
     }
