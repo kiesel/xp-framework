@@ -353,17 +353,16 @@
         $a.= ' @'.$name.'= '.xp::stringOf($value);
       }
       $s= $this->getClassName().'('.$this->name.$a.") {";
-      foreach ($this->children as $child) {
-        $s.= '  '.$child->toString()."\n";
+
+      if (sizeof($this->children)) {
+        $inner= "\n";
+        foreach ($this->children as $child) {
+          $inner.= str_replace("\n", "\n  ", '  '.$child->toString())."\n";
+        }
+
+        $s.= $inner;
       }
-      // if (!$this->children) {
-      //   $s.= NULL === $this->content ? ' ' : ' '.xp::stringOf($this->content).' ';
-      // } else {
-      //   $s.= NULL === $this->content ? "\n" : "\n  ".xp::stringOf($this->content)."\n";
-      //   foreach ($this->children as $child) {
-      //     $s.= '  '.str_replace("\n", "\n  ", xp::stringOf($child))."\n";
-      //   }
-      // }
+
       return $s.'}';
     }
   }
