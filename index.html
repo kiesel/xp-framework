@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>XP Framework by kiesel</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/kiesel/xp-framework">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/kiesel/xp-framework/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/kiesel/xp-framework/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>XP Framework</h1>
+          <p>The XP Framework is an all-purpose, object-oriented PHP framework.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/kiesel">kiesel</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <p><img src="https://raw.github.com/gist/2894593/a08fc0e3a31aacdcdb8bfe82fa8664c2c95ee621/images/xp-framework.png" border="0"><img src="https://secure.travis-ci.org/kiesel/xp-framework.png" border="0"></p>
+
+<h3>About</h3>
+
+<p>The XP framework offers consistent, multi-purpose, object oriented, production-tested collection of classes, APIs for app server connectivity, web services, dynamic web sites, date access and manipulation, logging, collections, I/O, databases, O/R mapping, XML, unittesting, and much more.</p>
+
+<h3>Example: Age in days</h3>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+  <span class="nx">uses</span><span class="p">(</span><span class="s1">'util.Date'</span><span class="p">,</span> <span class="s1">'util.DateUtil'</span><span class="p">);</span>
+
+  <span class="k">class</span> <span class="nc">AgeInDays</span> <span class="k">extends</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">main</span><span class="p">(</span><span class="k">array</span> <span class="nv">$args</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$span</span><span class="o">=</span> <span class="nx">DateUtil</span><span class="o">::</span><span class="na">timespanBetween</span><span class="p">(</span><span class="k">new</span> <span class="nx">Date</span><span class="p">(</span><span class="nv">$args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nx">Date</span><span class="o">::</span><span class="na">now</span><span class="p">());</span>
+      <span class="nx">Console</span><span class="o">::</span><span class="na">writeLine</span><span class="p">(</span><span class="s1">'Hey, you are '</span><span class="p">,</span> <span class="nv">$span</span><span class="o">-&gt;</span><span class="na">getDays</span><span class="p">(),</span> <span class="s1">' days old'</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre>
+</div>
+
+
+<p>Now, run it:</p>
+
+<pre><code>$ xp AgeInDays 1980-05-28
+Hey, you are 11699 days old
+</code></pre>
+
+<h3>Install a release</h3>
+
+<p>Download a release from our <a href="http://releases.xp-framework.net/">Releases site</a>. </p>
+
+<h3>Roadmap</h3>
+
+<p>Learn about what is planned and what features older releases contained:</p>
+
+<ul>
+<li><a href="https://github.com/xp-framework/xp-framework/issues/milestones?state=open">Planned / future releases roadmap</a></li>
+<li><a href="https://github.com/xp-framework/xp-framework/issues/milestones?state=closed">Existing releases roadmap</a></li>
+</ul><h3>Explore</h3>
+
+<p>To learn more about the XP Framework, here are some resources to read about it:</p>
+
+<ul>
+<li><a href="https://github.com/xp-framework/xp-framework/wiki/setup.framework">Quickstart Guide</a></li>
+<li><a href="https://github.com/xp-framework/xp-framework/wiki/mailinglists">Our mailing lists</a></li>
+<li><a href="https://github.com/xp-framework/xp-framework/wiki/setup.checkout">Checkout instructions</a></li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
