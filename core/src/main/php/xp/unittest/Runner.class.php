@@ -21,7 +21,8 @@
     'unittest.TestSuite',
     'util.Properties',
     'util.collections.Vector',
-    'util.cmd.Console'
+    'util.cmd.Console',
+    'lang.Runtime'
   );
 
   /**
@@ -222,6 +223,7 @@
         '=off'  => FALSE,
         '=auto' => NULL
       );
+      $runtime= new Runtime();
       $coverageReportFile= NULL;
 
       try {
