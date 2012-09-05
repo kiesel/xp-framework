@@ -223,7 +223,7 @@
         '=off'  => FALSE,
         '=auto' => NULL
       );
-      $runtime= new Runtime();
+      $runtime= Runtime::getInstance();
       $coverageReportFile= NULL;
 
       try {
