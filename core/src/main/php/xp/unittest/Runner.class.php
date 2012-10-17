@@ -38,14 +38,19 @@
    * <ul>
    *   <li>-v : Be verbose</li>
    *   <li>-q : Be quiet (no output)</li>
-   *   <li>-c : Add path elements for codecoverage</li>
-   *   <li>-cr: Set path for code coverage report file</li>
    *   <li>-cp: Add classpath elements</li>
    *   <li>-a {argument}: Define argument to pass to tests (may be used
    *     multiple times)</li>
+<<<<<<< HEAD:core/src/main/php/xp/unittest/Runner.class.php
    *   <li>-l {listener.class.Name} {output} [-o option value [-o ...]]
    *     where output is either "-" for console output or a file name. 
    *     Options with "-o" are listener-dependant arguments.</li>
+=======
+   *   <li>-l {listener.class.Name} {output}, where output is either "-"
+   *     for console output or a file name</li>
+   *   <li>-o {name} {value}: Set option for last added listener (may be
+   *     used multiple times)
+>>>>>>> - remove CoverageListener in Runner.class.php:tools/src/main/php/xp/unittest/Runner.class.php
    *   <li>--color={mode} : Enable / disable color; mode can be one of
    *     . "on" - activate color mode
    *     . "off" - disable color mode
@@ -214,7 +219,6 @@
       // Parse arguments
       $sources= new Vector();
       $listener= TestListeners::$DEFAULT;
-      $coverage= NULL;
       $arguments= array();
       $colors= NULL;
       $cmap= array(
@@ -232,16 +236,6 @@
             $listener= TestListeners::$VERBOSE;
           } else if ('-q' == $args[$i]) {
             $listener= TestListeners::$QUIET;
-          } else if ('-c' == $args[$i]) {
-            if (!Runtime::extensionAvailable('xdebug')) {
-              throw new PrerequisitesNotMetError('code coverage not avaiable. Please install the xdebug extension.');
-            }
-            $coverage= new CoverageListener();
-            foreach (explode(PATH_SEPARATOR, $this->arg($args, ++$i, 'c')) as $path) {
-              $coverage->registerPath($path);
-            }
-          } else if ('-cr' == $args[$i]) {
-            $coverageReportFile= $this->arg($args, ++$i, 'cr');
           } else if ('-cp' == $args[$i]) {
             foreach (explode(PATH_SEPARATOR, $this->arg($args, ++$i, 'cp')) as $element) {
               ClassLoader::registerPath($element, NULL);
@@ -298,6 +292,21 @@
               return 2;
             }
           } else if ('-?' == $args[$i] || '--help' == $args[$i]) {
+=======
+            $class= XPClass::forName($this->arg($args, ++$i, 'l'));
+            $output= $this->streamWriter($this->arg($args, ++$i, 'l'));
+            $listener= $suite->addListener($class->newInstance($output));
+          } else if ('-o' == $args[$i]) {
+            $name= $this->arg($args, ++$i, 'o');
+            $value= $this->arg($args, ++$i, 'o');
+            $method= 'set'.ucfirst($name);
+            if ($listener->getClass()->hasMethod($method)) {
+              $listener->getClass()->getMethod($method)->invoke($listener, array($value));
+            } else {
+              throw new IllegalArgumentException('Unsupported option "'.$name.'" for '.$listener->getClassName());
+            }
+          } else if ('-?' == $args[$i]) {
+>>>>>>> - remove CoverageListener in Runner.class.php:tools/src/main/php/xp/unittest/Runner.class.php
             return $this->usage();
           } else if ('-a' == $args[$i]) {
             $arguments[]= $this->arg($args, ++$i, 'a');
@@ -327,17 +336,6 @@
         $this->err->writeLine('*** ', $e->getMessage());
         xp::gc();
         return 1;
-      }
-
-      if (NULL !== $coverageReportFile) {
-        if (NULL === $coverage) {
-          throw new IllegalArgumentException('Unsupported argument -cr when code coverage is not used (see -c flag)');
-        }
-        $coverage->setReportFile($coverageReportFile);
-      }
-
-      if (isset($coverage)) {
-        $suite->addListener($coverage);
       }
 
       if ($sources->isEmpty()) {
