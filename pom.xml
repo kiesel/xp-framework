@@ -11,7 +11,7 @@
   <!-- The basics -->
   <groupId>net.xp-framework</groupId>
   <artifactId>pom</artifactId>
-  <version>5.8.13</version>
+  <version>5.8.14-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- More project information -->
