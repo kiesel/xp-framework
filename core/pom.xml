@@ -210,8 +210,8 @@
 
   <!-- Source code management -->
   <scm>
-    <connection>scm:git:git://github.com/1and1/xp-framework.git</connection>
-    <developerConnection>scm:git:git@github.com:1and1/xp-framework.git</developerConnection>
+    <connection>scm:git:git://github.com/kiesel/xp-framework.git</connection>
+    <developerConnection>scm:git:git@github.com:kiesel/xp-framework.git</developerConnection>
     <url>https://github.com/xp-framework/xp-framework</url>
   </scm>
 
