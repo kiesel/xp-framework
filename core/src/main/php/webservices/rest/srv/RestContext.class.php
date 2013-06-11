@@ -8,13 +8,16 @@
     'peer.http.HttpConstants',
     'scriptlet.Preference',
     'webservices.rest.TypeMarshaller',
+    'webservices.rest.RestFormat',
     'webservices.rest.srv.Response',
-    'webservices.rest.srv.RestFormat',
     'webservices.rest.srv.RestParamSource',
     'webservices.rest.srv.ExceptionMapper',
     'webservices.rest.srv.ParamReader',
     'webservices.rest.srv.DefaultExceptionMapper',
+    'webservices.rest.srv.DefaultExceptionMarshaller',
     'util.collections.HashTable',
+    'util.PropertyManager',
+    'util.log.Logger',
     'util.log.Traceable'
   );
 
@@ -27,10 +30,6 @@
     protected $mappers;
     protected $marshallers;
     protected $cat= NULL;
-
-    static function __static() {
-      xp::extensions(__CLASS__, __CLASS__);
-    }
 
     /**
      * Constructor
@@ -46,6 +45,8 @@
       $this->addExceptionMapping('lang.ElementNotFoundException', new DefaultExceptionMapper(404));
       $this->addExceptionMapping('lang.MethodNotImplementedException', new DefaultExceptionMapper(501));
       $this->addExceptionMapping('lang.FormatException', new DefaultExceptionMapper(422));
+
+      $this->addMarshaller('lang.Throwable', new DefaultExceptionMarshaller());
     }
 
     /**
@@ -53,9 +54,21 @@
      *
      * @param  var type either a full qualified class name or an XPClass instance
      * @param  webservices.rest.srv.ExceptionMapper m
+     * @return webservices.rest.srv.ExceptionMapper The added mapper
      */
     public function addExceptionMapping($type, ExceptionMapper $m) {
       $this->mappers[$type instanceof XPClass ? $type : XPClass::forName($type)]= $m;
+      return $m;
+    }
+
+    /**
+     * Gets an exception mapper
+     *
+     * @param  var type either a full qualified class name or an XPClass instance
+     * @return webservices.rest.srv.ExceptionMapper or NULL if no mapper exists
+     */
+    public function getExceptionMapping($type) {
+      return $this->mappers[$type instanceof XPClass ? $type : XPClass::forName($type)];
     }
 
     /**
@@ -63,9 +76,35 @@
      *
      * @param  var type either a full qualified type name or a type instance
      * @param  webservices.rest.TypeMarshaller m
+     * @return webservices.rest.TypeMarshaller The added marshaller
      */
     public function addMarshaller($type, TypeMarshaller $m) {
-      $this->marshallers[$type instanceof Type ? $type : Type::forName($type)]= $m;
+      $keys= $this->marshallers->keys();
+
+      // Add marshaller
+      $t= $type instanceof Type ? $type : Type::forName($type);
+      $this->marshallers[$t]= $m;
+
+      // Iterate over map keys before having altered the map, checking for
+      // any marshallers less specific than the added marshaller, and move
+      // them to the end. E.g. if a marshaller for Dates is added, it needs 
+      // to be in the map *before* the one for for Objects!
+      foreach ($keys as $type) {
+        if ($type->isAssignableFrom($t)) {
+          $this->marshallers->put($type, $this->marshallers->remove($type));
+        }
+      }
+      return $m;
+    }
+
+    /**
+     * Adds a type marshaller
+     *
+     * @param  var type either a full qualified type name or a type instance
+     * @return webservices.rest.TypeMarshaller The added marshaller
+     */
+    public function getMarshaller($type) {
+      return $this->marshallers[$type instanceof Type ? $type : Type::forName($type)];
     }
 
     /**
@@ -80,14 +119,14 @@
       // See if we can find an exception mapper
       foreach ($this->mappers->keys() as $type) {
         if (!$type->isInstance($t)) continue;
-        $r= $this->mappers[$type]->asResponse($t);
+        $r= $this->mappers[$type]->asResponse($t, $this);
         $r->payload->properties= $properties;
         return $r;
       }
 
       // Default: Use error 500 ("Internal Server Error") and the exception message
       return Response::error(HttpConstants::STATUS_INTERNAL_SERVER_ERROR)
-        ->withPayload(new Payload(array('message' => $t->getMessage()), $properties))
+        ->withPayload($this->marshal(new Payload($t), $properties))
       ;
     }
 
@@ -102,25 +141,10 @@
 
       foreach ($this->marshallers->keys() as $type) {
         if (!$type->isInstance($payload->value)) continue;
-
         $payload->value= $this->marshallers[$type]->marshal($payload->value);
         break;
       }
       return NULL === $payload->value ? NULL : new Payload($payload->value, $properties);
-    }
-
-    /**
-     * Returns whether this type instance is assignable from a given type "t"
-     *
-     * @param  lang.Type self
-     * @param  lang.Type type 
-     */
-    protected static function isAssignableFrom($self, $t) {
-      if ($self instanceof XPClass) {
-        return $self->equals($t) || $t->isSubclassOf($self);
-      } else {
-        return $self->equals($t);
-      }
     }
 
     /**
@@ -132,7 +156,7 @@
      */
     public function unmarshal(Type $target, $in) {
       foreach ($this->marshallers->keys() as $type) {
-        if ($type->isAssignableFrom($target)) return $this->marshallers[$type]->unmarshal($in);
+        if ($type->isAssignableFrom($target)) return $this->marshallers[$type]->unmarshal($target, $in);
       }
       return $in;
     }
@@ -147,10 +171,14 @@
       if ($routine->numParameters() < 1) return array();
 
       $inject= $routine->getAnnotation('inject');
-      $type= isset($inject['type']) ? $inject['type'] : $routine->getParameter(0)->getTypeName();
+      $type= isset($inject['type']) ? $inject['type'] : $routine->getParameter(0)->getType()->getName();
       switch ($type) {
         case 'util.log.LogCategory': 
-          $args= array($this->cat);
+          $args= array(isset($inject['name']) ? Logger::getInstance()->getCategory($inject['name']) : $this->cat);
+          break;
+
+        case 'util.Properties': 
+          $args= array(PropertyManager::getInstance()->getProperties($inject['name']));
           break;
 
         case 'webservices.rest.srv.RestContext':
@@ -169,6 +197,7 @@
      *
      * @param  lang.XPClass class
      * @return lang.Generic instance
+     * @throws lang.reflect.TargetInvocationException If the constructor or routines used for injection raise an exception
      */
     public function handlerInstanceFor($class) {
 
@@ -222,7 +251,7 @@
       // use its status, headers and payload. For any other methods, set status to "OK".
       if (Type::$VOID->equals($method->getReturnType())) {
         return Response::status(HttpConstants::STATUS_NO_CONTENT);
-      } else if ($result instanceof Response) {
+      } else if ($result instanceof webservices·rest·srv·Output) {
         $result->payload= $this->marshal($result->payload, $properties);
         return $result;
       } else {
@@ -288,35 +317,20 @@
       try {
         $this->cat && $this->cat->debug('->', $target);
         $result= $this->handle(
-          $this->handlerInstanceFor($target['target']->getDeclaringClass()),
+          $this->handlerInstanceFor($target['handler']),
           $target['target'],
           $this->argumentsFor($target, $request)
         );
+      } catch (TargetInvocationException $e) {
+        $this->cat && $this->cat->error('<-', $e);
+        $result= $this->mapException($e->getCause());
       } catch (Throwable $t) {                         // Marshalling, parameters, instantiation
         $this->cat && $this->cat->error('<-', $t);
         $result= $this->mapException($t);
       }
 
       // Have a result
-      $response->setStatus($result->status);
-      foreach ($result->headers as $name => $value) {
-        if ('Location' === $name) {
-          $url= clone $request->getURL();
-          $response->setHeader($name, $url->setPath($value)->getURL());
-        } else {
-          $response->setHeader($name, $value);
-        }
-      }
-      foreach ($result->cookies as $cookie) {
-        $response->setCookie($cookie);
-      }
-      if (NULL !== $result->payload) {
-        $response->setContentType($target['output']);
-        RestFormat::forMediaType($target['output'])->write($response, $result->payload);
-      }
-
-      // Handled
-      return TRUE;
+      return $result->writeTo($response, $request->getURL(), $target['output']);
     }
 
     /**

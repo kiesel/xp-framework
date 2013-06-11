@@ -12,7 +12,7 @@
   <!-- The basics -->
   <groupId>net.xp-framework</groupId>
   <artifactId>pom</artifactId>
-  <version>5.8.10-SNAPSHOT</version>
+  <version>5.9.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- More project information -->
@@ -43,97 +43,23 @@
   <!-- Project modules -->
   <modules>
     <module>./core</module>
-    <module>./tools</module>
   </modules>
 
-  <!-- Properties -->
-  <properties>
-    <project.build.sourceEncoding>ISO-8859-15</project.build.sourceEncoding>
-  </properties>
-
-  <!-- Build settings -->
+  <!-- Plugin configuration -->
   <build>
     <plugins>
       <plugin>
-        <groupId>net.xp-forge.maven.plugins</groupId>
-        <artifactId>xp-maven-plugin</artifactId>
-        <version>3.2.2</version>
-        <extensions>true</extensions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4.1</version>
         <configuration>
-
-          <!-- @see https://github.com/xp-framework/xp-framework/wiki/setup.extensions -->
-          <extensions>
-
-            <!-- Core -->
-            <extension>standard</extension>
-            <extension>pcre</extension>
-            <extension>tokenizer</extension>
-            <extension>reflection</extension>
-            <extension>ctype</extension>
-            <extension>iconv</extension>
-            <extension>date</extension>
-            <extension>com_dotnet</extension>
-            <extension>zlib</extension>
-
-            <!-- XML -->
-            <extension>dom</extension>
-            <extension>xsl</extension>
-            <extension>xml</extension>
-            <extension>libxml</extension>
-
-            <!-- Networking -->
-            <extension>sockets</extension>
-            <extension>ftp</extension>
-            <extension>openssl</extension>
-            <extension>ldap</extension>
-            <extension>soap</extension>
-
-            <!-- Imaging -->
-            <extension>gd</extension>
-            <extension>exif</extension>
-            <extension>mbstring</extension>
-
-            <!-- Databases ??? -->
-            <!--extension>mysql</extension>
-            <extension>mysqli</extension>
-            <extension>sqlite3</extension-->
-
-            <!-- The web -->
-            <extension>session</extension>
-
-            <!-- Parallel processing -->
-            <extension>pcntl</extension>
-            <extension>posix</extension>
-          </extensions>
+          <pushChanges>false</pushChanges>
+          <tagNameFormat>maven-@{project.version}</tagNameFormat>
+          <localCheckout>true</localCheckout>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
-  <!--
-   ! Dependency management
-   !
-   ! Add [net.xp-framework:pom] as 'import' dependency. It will be replaced with both
-   ! [net.xp-framework:core] and [net.xp-framework:tools] dependencies
-   !
-   ! @since 5.8.7
-   !-->
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>net.xp-framework</groupId>
-        <artifactId>core</artifactId>
-        <version>${project.version}</version>
-        <type>xar</type>
-      </dependency>
-      <dependency>
-        <groupId>net.xp-framework</groupId>
-        <artifactId>tools</artifactId>
-        <version>${project.version}</version>
-        <type>xar</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <!-- Source code management -->
   <scm>
@@ -141,10 +67,4 @@
     <developerConnection>scm:git:git@github.com:xp-framework/xp-framework.git</developerConnection>
     <url>https://github.com/xp-framework/xp-framework</url>
   </scm>
-
-  <!-- Issue management -->
-  <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/xp-framework/xp-framework/issues</url>
-  </issueManagement>
 </project>

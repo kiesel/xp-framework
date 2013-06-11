@@ -4,6 +4,8 @@
  * $Id$
  */
 
+  uses('webservices.rest.srv.RestParamSource');
+
   /**
    * REST route interface
    *
@@ -12,6 +14,7 @@
   class RestRoute extends Object {
     protected $verb= '';
     protected $path= '';
+    protected $handler= NULL;
     protected $target= NULL;
     protected $accepts= array();
     protected $produces= array();
@@ -22,13 +25,15 @@
      * 
      * @param  string verb
      * @param  string path
+     * @param  lang.XPClass handler
      * @param  lang.reflect.Method target
      * @param  string[] accepts
      * @param  string[] produces
      */
-    public function __construct($verb, $path, $target, $accepts, $produces) {
+    public function __construct($verb, $path, $handler, $target, $accepts, $produces) {
       $this->verb= strtoupper($verb);
       $this->path= $path;
+      $this->handler= $handler;
       $this->target= $target;
       $this->accepts= $accepts;
       $this->produces= $produces;
@@ -58,10 +63,26 @@
      * @return string
      */
     public function getPattern() {
-      static $search= '/\{([\w]*)\}/';
-      static $replace= '(?P<$1>[%\w:\+\-\.]*)';
+      return '#^'.preg_replace('/\{([\w]*)\}/', '(?P<$1>[^/]+)', $this->path).'$#';
+    }
 
-      return '#^'.preg_replace($search, $replace, $this->path).'$#';
+    /**
+     * Get segments
+     *
+     * @param  string path
+     * @return [:string] segments
+     */
+    public function appliesTo($path) {
+      return preg_match($this->getPattern(), $path, $segments) ? $segments : NULL;
+    }
+
+    /**
+     * Get handler
+     *
+     * @return lang.XPClass
+     */
+    public function getHandler() {
+      return $this->handler;
     }
 
     /**
@@ -95,7 +116,7 @@
      * Add a parameter
      *
      * @param  string name
-     * @param  webservices.rest.src.RestParamSource source
+     * @param  webservices.rest.srv.RestParamSource source
      */
     public function addParam($name, $source) {
       $this->params[$name]= $source;
@@ -104,7 +125,7 @@
     /**
      * Gets all parameters
      *
-     * @param  [:webservices.rest.src.RestParamSource]
+     * @param  [:webservices.rest.srv.RestParamSource]
      */
     public function getParams() {
       return $this->params;
@@ -121,12 +142,13 @@
         $params.= ', @$'.$name.': '.$source->toString();
       }
       return sprintf(
-        '%s(%s %s%s -> %s %s(%s)%s)',
+        '%s(%s %s%s -> %s %s::%s(%s)%s)',
         $this->getClassName(),
         $this->verb,
         $this->path,
         NULL === $this->accepts ? '' : ' @ '.implode(', ', $this->accepts),
         $this->target->getReturnTypeName(),
+        $this->handler->getName(),
         $this->target->getName(),
         substr($params, 2),
         NULL === $this->produces ? '' : ' @ '.implode(', ', $this->produces)

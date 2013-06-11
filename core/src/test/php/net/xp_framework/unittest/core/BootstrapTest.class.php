@@ -14,6 +14,16 @@
    *
    */
   class BootstrapTest extends TestCase {
+
+    /**
+     * Skips tests if process execution has been disabled.
+     */
+    #[@beforeClass]
+    public static function verifyProcessExecutionEnabled() {
+      if (Process::$DISABLED) {
+        throw new PrerequisitesNotMetError('Process execution disabled', NULL, array('enabled'));
+      }
+    }
   
     /**
      * Create a new runtime
@@ -23,8 +33,7 @@
      * @return  var[] an array with three elements: exitcode, stdout and stderr contents
      */
     protected function runWith(RuntimeOptions $options) {
-      with ($out= $err= '', $p= Runtime::getInstance()->newInstance($options, NULL)); {
-        $p->in->write('<?php require("lang.base.php"); ?>');
+      with ($out= $err= '', $p= Runtime::getInstance()->newInstance($options, 'class', 'xp.runtime.Evaluate', array('return 1;'))); {
         $p->in->close();
 
         // Read output

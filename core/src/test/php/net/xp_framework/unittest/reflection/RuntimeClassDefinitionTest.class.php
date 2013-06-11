@@ -9,14 +9,12 @@
   /**
    * TestCase
    *
-   * @see      reference
-   * @purpose  purpose
+   * @see   xp://lang.CLassLoader
    */
   class RuntimeClassDefinitionTest extends TestCase {
 
     /**
      * Helper method
-     *
      * @param   string name
      * @param   lang.XPClass class
      * @throws  unittest.AssertionFailedError
@@ -28,9 +26,10 @@
 
     /**
      * Helper method
-     *
      * @param   string name
-     * @param   lang.XPClass class
+     * @param   string parent
+     * @param   string[] interfaces
+     * @return  lang.XPClass class
      * @throws  unittest.AssertionFailedError
      */
     protected function defineClass($name, $parent, $interfaces, $bytes) {
@@ -42,7 +41,6 @@
 
     /**
      * Helper method
-     *
      * @param   string name
      * @param   lang.XPClass class
      * @throws  unittest.AssertionFailedError
@@ -56,7 +54,6 @@
 
     /**
      * Test defineClass() method
-     *
      */
     #[@test]
     public function defineClassWithInitializer() {
@@ -75,7 +72,6 @@
     
     /**
      * Tests defineClass() with a given interface
-     *
      */
     #[@test]
     public function defineTraceableClass() {
@@ -89,8 +85,56 @@
     }
 
     /**
+     * Tests defineClass()
+     */
+    #[@test]
+    public function defineClassWithXPClassParent() {
+      $parent= XPClass::forName('lang.Object');
+      $class= $this->defineClass('_'.$this->name, $parent, array(), '{ }');
+      $this->assertEquals($parent, $class->getParentclass());
+    }
+
+    /**
+     * Tests defineClass()
+     */
+    #[@test]
+    public function defineClassWithXPClassInterface() {
+      $interface= XPClass::forName('lang.Runnable');
+      $class= $this->defineClass('_'.$this->name, 'lang.Object', array($interface), '{
+        public function run() { }
+      }');
+      $this->assertEquals($interface, this($class->getDeclaredInterfaces(), 0));
+    }
+
+    /**
+     * Test defineClass() method
+     */
+    #[@test, @expect('lang.ClassNotFoundException')]
+    public function defineClassWithNonExistantParent() {
+      $name= 'net.xp_framework.unittest.reflection.ErroneousClass';
+      $this->defineClass($name, '@@nonexistant@@', array(), '{ }');
+    }
+
+    /**
+     * Test defineClass() method
+     */
+    #[@test, @expect('lang.ClassNotFoundException')]
+    public function defineClassWithOneNonExistantInterface() {
+      $name= 'net.xp_framework.unittest.reflection.ErroneousClass';
+      $this->defineClass($name, 'lang.Object', array('@@nonexistant@@'), '{ }');
+    }
+
+    /**
+     * Test defineClass() method
+     */
+    #[@test, @expect('lang.ClassNotFoundException')]
+    public function defineClassWithOneExistantAndOneNonExistantInterface() {
+      $name= 'net.xp_framework.unittest.reflection.ErroneousClass';
+      $this->defineClass($name, 'lang.Object', array('lang.Runnable', '@@nonexistant@@'), '{ }');
+    }
+
+    /**
      * Tests newinstance()
-     *
      */
     #[@test]
     public function newInstance() {
@@ -100,7 +144,6 @@
 
     /**
      * Tests Proxy
-     *
      */
     #[@test]
     public function proxyInstance() {
@@ -113,7 +156,6 @@
 
     /**
      * Test defineInterface() method
-     *
      */
     #[@test]
     public function defineSimpleInterface() {
@@ -129,7 +171,6 @@
 
     /**
      * Test defineInterface() method
-     *
      */
     #[@test]
     public function defineInterfaceWithParent() {
@@ -145,14 +186,56 @@
 
     /**
      * Test defineInterface() method
-     *
      */
     #[@test, @expect('lang.ClassNotFoundException')]
     public function defineInterfaceWithNonExistantParent() {
       $name= 'net.xp_framework.unittest.reflection.ErroneousInterface';
-      $this->defineInterface($name, array('@@nonexistant@@'), '{
-        public function setDebug($cat);
-      }');
+      $this->defineInterface($name, array('@@nonexistant@@'), '{ }');
+    }
+
+    /**
+     * Test defineInterface() method
+     */
+    #[@test, @expect('lang.ClassNotFoundException')]
+    public function defineInterfaceWithOneExistantAndOneNonExistantParent() {
+      $name= 'net.xp_framework.unittest.reflection.ErroneousInterface';
+      $this->defineInterface($name, array('lang.Runnable', '@@nonexistant@@'), '{ }');
+    }
+
+    /**
+     * Test default class loader
+     * @see   https://github.com/xp-framework/xp-framework/issues/94
+     */
+    #[@test]
+    public function defaultClassLoaderProvidesDefinedClass() {
+      $class= 'net.xp_framework.unittest.reflection.lostandfound.CL1';
+      $this->defineClass($class, 'lang.Object', array(), '{ }');
+
+      $this->assertTrue(ClassLoader::getDefault()->providesClass($class));
+    }
+
+    /**
+     * Test default class loader
+     * @see   https://github.com/xp-framework/xp-framework/issues/94
+     */
+    #[@test]
+    public function defaultClassLoaderProvidesDefinedInterface() {
+      $class= 'net.xp_framework.unittest.reflection.lostandfound.IF1';
+      $this->defineInterface($class, array(), '{ }');
+
+      $this->assertTrue(ClassLoader::getDefault()->providesClass($class));
+    }
+
+    /**
+     * Test default class loader
+     * @see   https://github.com/xp-framework/xp-framework/issues/94
+     */
+    #[@test]
+    public function defaultClassLoaderProvidesPackageOfDefinedClass() {
+      $package= 'net.xp_framework.unittest.reflection.lostandfound';
+      $this->defineClass($package.'.CL2', 'lang.Object', array(), '{ }');
+
+      $this->assertTrue(ClassLoader::getDefault()->providesPackage($package));
     }
   }
 ?>

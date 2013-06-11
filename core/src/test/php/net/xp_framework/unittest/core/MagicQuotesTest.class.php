@@ -16,6 +16,16 @@
    * @see   php://magic_quotes
    */
   class MagicQuotesTest extends TestCase {
+
+    /**
+     * Skips tests if process execution has been disabled.
+     */
+    #[@beforeClass]
+    public static function verifyProcessExecutionEnabled() {
+      if (Process::$DISABLED) {
+        throw new PrerequisitesNotMetError('Process execution disabled', NULL, array('enabled'));
+      }
+    }
   
     /**
      * Setup test. Verifies PHP version constraint
@@ -50,8 +60,7 @@
       $options= $runtime->startupOptions()->withSetting('magic_quotes_gpc', 1)->withSetting('error_reporting', 'E_ALL');
       $out= $err= '';
 
-      with ($p= $runtime->newInstance($options, NULL)); {
-        $p->in->write('<?php require("lang.base.php"); ?>');
+      with ($p= $runtime->newInstance($options, 'class', 'xp.runtime.Evaluate', array('return 1;'))); {
         $p->in->close();
 
         // Read output
@@ -98,7 +107,7 @@
     public function phpRefusesToStart() {
       $r= $this->run();
       $this->assertEquals(1, $r[0], 'exitcode');
-      $this->assertTrue((bool)strstr($r[1], "Directive 'magic_quotes_gpc' is no longer available in PHP"), xp::stringOf($r));
+      $this->assertTrue((bool)strstr($r[1].$r[2], "Directive 'magic_quotes_gpc' is no longer available in PHP"), xp::stringOf($r));
     }
   }
 ?>

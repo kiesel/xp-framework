@@ -7,7 +7,10 @@
   uses(
     'unittest.TestCase',
     'lang.Runnable',
-    'lang.Runtime'
+    'lang.Runtime',
+    'net.xp_framework.unittest.core.PackagedClass',
+    'net.xp_framework.unittest.core.NamespacedClass',
+    'net.xp_framework.unittest.core.NamespacedInterface'
   );
 
   /**
@@ -15,6 +18,16 @@
    *
    */
   class NewInstanceTest extends TestCase {
+
+    /**
+     * Skips tests if process execution has been disabled.
+     */
+    #[@beforeClass]
+    public static function verifyProcessExecutionEnabled() {
+      if (Process::$DISABLED) {
+        throw new PrerequisitesNotMetError('Process execution disabled', NULL, array('enabled'));
+      }
+    }
 
     /**
      * Issues a uses() command inside a new runtime for every class given
@@ -25,8 +38,7 @@
      * @return  var[] an array with three elements: exitcode, stdout and stderr contents
      */
     protected function runInNewRuntime($uses, $src) {
-      with ($out= $err= '', $p= Runtime::getInstance()->newInstance(NULL, NULL)); {
-        $p->in->write('<?php require("lang.base.php");');
+      with ($out= $err= '', $p= Runtime::getInstance()->newInstance(NULL, 'class', 'xp.runtime.Evaluate', array())); {
         $uses && $p->in->write('uses("'.implode('", "', $uses).'");');
         $p->in->write($src);
         $p->in->close();
@@ -110,19 +122,90 @@
     }
 
     /**
-     * Test constructing an interface instance without implementing all
-     * required methods raises a fatal
+     * Test using a non-existant class in newinstance() causes a fatal error.
      *
      */
     #[@test]
     public function missingClassFatals() {
       $r= $this->runInNewRuntime(array(), '
-        newinstance("lang.Runnable", array(), "{}");
+        newinstance("lang.NonExistantClass", array(), "{}");
       ');
       $this->assertEquals(255, $r[0], 'exitcode');
       $this->assertTrue(
-        (bool)strstr($r[1].$r[2], 'Class "lang.Runnable" does not exist'),
+        (bool)strstr($r[1].$r[2], 'Class "lang.NonExistantClass" could not be found'),
         xp::stringOf(array('out' => $r[1], 'err' => $r[2]))
+      );
+    }
+
+    /**
+     * Test using a not previously defined class is loaded
+     *
+     */
+    #[@test]
+    public function notPreviouslyDefinedClassIsLoaded() {
+      $r= $this->runInNewRuntime(array(), '
+        if (isset(xp::$cl["lang.Runnable"])) {
+          xp::error("Class lang.Runnable may not have been previously loaded");
+        }
+        $r= newinstance("lang.Runnable", array(), "{ public function run() { echo \"Hi\"; } }");
+        $r->run();
+      ');
+      $this->assertEquals(0, $r[0], 'exitcode');
+      $this->assertTrue(
+        (bool)strstr($r[1].$r[2], 'Hi'),
+        xp::stringOf(array('out' => $r[1], 'err' => $r[2]))
+      );
+    }
+
+    /**
+     * Tests package retrieval on newinstance() created namespaced class
+     *
+     */
+    #[@test]
+    public function packageOfNewInstancedClass() {
+      $i= newinstance('lang.Object', array(), '{}');
+      $this->assertEquals(
+        Package::forName('lang'),
+        $i->getClass()->getPackage()
+      );
+    }
+
+    /**
+     * Tests package retrieval on newinstance() created namespaced class
+     *
+     */
+    #[@test]
+    public function packageOfNewInstancedFullyQualifiedClass() {
+      $i= newinstance('net.xp_framework.unittest.core.PackagedClass', array(), '{}');
+      $this->assertEquals(
+        Package::forName('net.xp_framework.unittest.core'),
+        $i->getClass()->getPackage()
+      );
+    }
+
+    /**
+     * Tests package retrieval on newinstance() created namespaced class
+     *
+     */
+    #[@test]
+    public function packageOfNewInstancedNamespacedClass() {
+      $i= newinstance('net.xp_framework.unittest.core.NamespacedClass', array(), '{}');
+      $this->assertEquals(
+        Package::forName('net.xp_framework.unittest.core'),
+        $i->getClass()->getPackage()
+      );
+    }
+
+    /**
+     * Tests package retrieval on newinstance() created namespaced class
+     *
+     */
+    #[@test]
+    public function packageOfNewInstancedNamespacedInterface() {
+      $i= newinstance('net.xp_framework.unittest.core.NamespacedInterface', array(), '{}');
+      $this->assertEquals(
+        Package::forName('net.xp_framework.unittest.core'),
+        $i->getClass()->getPackage()
       );
     }
 
@@ -135,7 +218,7 @@
       $instance= newinstance('Object', array(), '{ }');
       $n= $instance->getClassName();
       $this->assertEquals(
-        'Object',
+        'lang.Object',
         substr($n, 0, strrpos($n, '·')),
         $n
       );
@@ -150,7 +233,7 @@
       $instance= newinstance('lang.Object', array(), '{ }');
       $n= $instance->getClassName();
       $this->assertEquals(
-        'Object',
+        'lang.Object',
         substr($n, 0, strrpos($n, '·')),
         $n
       );

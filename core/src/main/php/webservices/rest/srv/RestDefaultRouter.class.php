@@ -58,18 +58,19 @@
 
       isset($webservice['path']) && $base.= rtrim($webservice['path'], '/');
       foreach ($class->getMethods() as $method) {
-        if ($method->hasAnnotation('webmethod')) $this->addWebmethod($method, $base);
+        if ($method->hasAnnotation('webmethod')) $this->addWebmethod($class, $method, $base);
       }
     }
 
     /**
      * Add a webmethod
      *
+     * @param  lang.XPClass class
      * @param  lang.reflect.Method method
      * @param  string base
      * @throws lang.IllegalArgumentException
      */
-    public function addWebmethod($method, $base= '') {
+    public function addWebmethod($class, $method, $base= '') {
       try {
         $webmethod= $method->getAnnotation('webmethod');
       } catch (ElementNotFoundException $e) {
@@ -79,15 +80,17 @@
       // Create route from @webmethod annotation
       $route= $this->addRoute(new RestRoute(
         $webmethod['verb'],
-        $base.rtrim($webmethod['path'], '/'),
+        $base.(isset($webmethod['path']) ? rtrim($webmethod['path'], '/') : ''),
+        $class,
         $method,
         isset($webmethod['accepts']) ? (array)$webmethod['accepts'] : NULL,
         isset($webmethod['returns']) ? (array)$webmethod['returns'] : NULL
       ));
 
       // Add route parameters using parameter annotations
-      foreach ($method->getAnnotations() as $annotation => $value) {
-        if (2 === sscanf($annotation, '$%[^:]: %s', $param, $source)) {
+      foreach ($method->getParameters() as $parameter) {
+        $param= $parameter->getName();
+        foreach ($parameter->getAnnotations() as $source => $value) {
           $route->addParam($param, new RestParamSource(
             $value ? $value : $param,
             ParamReader::forName($source)
