@@ -8,7 +8,6 @@
 
   uses(
     'xp.unittest.TestListeners',
-    'xp.unittest.CoverageListener',
     'xp.unittest.sources.PropertySource',
     'xp.unittest.sources.ClassSource',
     'xp.unittest.sources.ClassFileSource',
@@ -41,16 +40,10 @@
    *   <li>-cp: Add classpath elements</li>
    *   <li>-a {argument}: Define argument to pass to tests (may be used
    *     multiple times)</li>
-<<<<<<< HEAD:core/src/main/php/xp/unittest/Runner.class.php
-   *   <li>-l {listener.class.Name} {output} [-o option value [-o ...]]
-   *     where output is either "-" for console output or a file name. 
-   *     Options with "-o" are listener-dependant arguments.</li>
-=======
    *   <li>-l {listener.class.Name} {output}, where output is either "-"
    *     for console output or a file name</li>
    *   <li>-o {name} {value}: Set option for last added listener (may be
    *     used multiple times)
->>>>>>> - remove CoverageListener in Runner.class.php:tools/src/main/php/xp/unittest/Runner.class.php
    *   <li>--color={mode} : Enable / disable color; mode can be one of
    *     . "on" - activate color mode
    *     . "off" - disable color mode
@@ -292,7 +285,6 @@
               return 2;
             }
           } else if ('-?' == $args[$i] || '--help' == $args[$i]) {
-=======
             $class= XPClass::forName($this->arg($args, ++$i, 'l'));
             $output= $this->streamWriter($this->arg($args, ++$i, 'l'));
             $listener= $suite->addListener($class->newInstance($output));
@@ -306,7 +298,6 @@
               throw new IllegalArgumentException('Unsupported option "'.$name.'" for '.$listener->getClassName());
             }
           } else if ('-?' == $args[$i]) {
->>>>>>> - remove CoverageListener in Runner.class.php:tools/src/main/php/xp/unittest/Runner.class.php
             return $this->usage();
           } else if ('-a' == $args[$i]) {
             $arguments[]= $this->arg($args, ++$i, 'a');

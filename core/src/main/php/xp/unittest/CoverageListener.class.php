@@ -10,7 +10,8 @@
     'xml.DomXSLProcessor',
     'xml.Node',
     'io.FileUtil',
-    'lang.Runtime'
+    'lang.Runtime',
+    'lang.RuntimeError'
   );
 
   /**
@@ -19,17 +20,17 @@
    * @purpose  TestListener
    */
   class CoverageListener extends Object implements TestListener {
-
     private
-      $paths    = array(),
-      $processor= NULL,
-      $reportFile= 'coverage.html';
+      $paths        = array(),
+      $processor    = NULL,
+      $reportFile   = 'coverage.html';
 
     /**
      * register a path to include in coverage report
      *
      * @param string
      */
+    #[@arg(name= 'registerPath')]
     public function setRegisterPath($path) {
       $this->paths[]= $path;
     }
@@ -39,6 +40,7 @@
      *
      * @param string
      */
+    #[@arg(name= 'reportFile')]
     public function setReportFile($reportFile) {
       $this->reportFile= $reportFile;
     }
@@ -53,12 +55,10 @@
      * @param io.streams.OutputStreamWriter out
      */
     public function __construct() {
-      $runtime= Runtime::getInstance();
-      if (!$runtime->extensionAvailable('xdebug')) {
-        throw new PrerequisitesNotMetError('code coverage not avaiable. Please install the xdebug extension.');
+      if (!Runtime::getInstance()->extensionAvailable('xdebug')) {
+        throw new RuntimeError('Code coverage not available. Please install the xdebug extension.');
       }
 
-      $runtime= Runtime::getInstance();
       $this->processor= new DomXSLProcessor();
       $this->processor->setXSLBuf($this->getClass()->getPackage()->getResource('coverage.xsl'));
 
