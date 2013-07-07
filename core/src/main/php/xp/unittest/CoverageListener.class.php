@@ -32,7 +32,7 @@
      */
     #[@arg(name= 'registerPath')]
     public function setRegisterPath($path) {
-      $this->paths[]= $path;
+      $this->paths[]=  realpath($path);
     }
 
     /**
@@ -42,7 +42,7 @@
      */
     #[@arg(name= 'reportFile')]
     public function setReportFile($reportFile) {
-      $this->reportFile= $reportFile;
+      $this->reportFile=$reportFile;
     }
 
     public function newInstance(OutputStreamWriter $out) {
@@ -151,30 +151,55 @@
 
       $results= array();
       foreach ($coverage as $fileName => $data) {
+
+        // FIXME: This code is not platform-agnostic
+        // FIXME: This should be improved to use ClassLoader API
         foreach ($this->paths as $path) {
+          if (0 == strncasecmp('dyn://', $fileName, 6)) {
+            $results['dynamic'][$fileName]= $data;
+            break;
+          }
+
           if (substr($fileName, 0, strlen($path)) !== $path) {
             continue;
           }
 
+          // FIXME: This relies on filesystem calls
           $results[dirname($fileName)][basename($fileName)]= $data;
           break;
         }
       }
 
-      $pathsNode= new Node('paths');
+      foreach ($results as $paths => $files) {
+        Console::$out->writeLine(' * '.$paths);
+        foreach ($files as $name => $dummy) {
+          Console::$out->writeLine('   > '.$name);
+        }
+      }
+      Console::$out->writeLine();
+
+      $tree= new Tree('paths');
+      $tree->root()->setAttribute('time', date('Y-m-d H:i:s'));
       foreach ($results as $pathName => $files) {
         $pathNode= new Node('path');
         $pathNode->setAttribute('name', $pathName);
 
         foreach ($files as $fileName => $data) {
+          Console::$out->writeLine('Adding ', $fileName);
           $fileNode= new Node('file');
           $fileNode->setAttribute('name', $fileName);
+
+          if (FALSE !== strpos($fileName, 'eval()\'d code')) {
+            continue;
+          }
+
+          if ('dynamic' == $pathName) {
+            continue;
+          }
 
           $num= 1;
           $reader= new TextReader(new FileInputStream($pathName.'/'.$fileName));
           while (($line = $reader->readLine()) !== NULL) {
-            $lineNode = new Node('line', new CData($line));
-
             $lineNode = new Node('line', new CData($line));
             if (isset($data[$num])) {
               if (1 === $data[$num]) {
@@ -190,11 +215,10 @@
 
           $pathNode->addChild($fileNode);
         }
-        $pathsNode->addChild($pathNode);
+        $tree->root->addChild($pathNode);
       }
-      $pathsNode->setAttribute('time', date('Y-m-d H:i:s'));
 
-      $this->processor->setXMLBuf($pathsNode->getSource());
+      $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
       $this->processor->run();
 
       FileUtil::setContents(new File($this->reportFile), $this->processor->output());
