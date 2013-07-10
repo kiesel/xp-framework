@@ -159,7 +159,7 @@
       foreach ($coverage as $fileName => $data) {
 
         $class= $cl->mapToClasS($fileName);
-        if (is('NULL', $class)) continue;
+        if (!$class) continue;
 
         if (0 == strncasecmp('dyn://', $fileName, 6)) {
           continue;
@@ -213,11 +213,11 @@
         }
       }
 
-      // $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
-      // $this->processor->run();
+      $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
+      $this->processor->run();
 
-      // FileUtil::setContents(new File($this->reportFile), $this->processor->output());
-      FileUtil::setContents(new File($this->reportFile), $tree->getDeclaration()."\n".$tree->getSource(0));
+      FileUtil::setContents(new File($this->reportFile), $this->processor->output());
+      // FileUtil::setContents(new File($this->reportFile), $tree->getDeclaration()."\n".$tree->getSource(0));
     }
   }
 ?>

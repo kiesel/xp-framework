@@ -136,16 +136,16 @@
       <body>
         <h1>
           <span class="title"><xsl:value-of select="'Code Coverage Report'" /></span>
-          <span class="date"><xsl:value-of select="/paths/@time" /></span>
+          <span class="date"><xsl:value-of select="/packages/@created" /></span>
         </h1>
 
         <div>
-          <h2>Folder</h2>
-          <xsl:for-each select="/paths/path">
+          <h2>Packages</h2>
+          <xsl:for-each select="/packages/package">
             <xsl:sort select="@name" />
 
-            <xsl:variable name="clocs" select="count(file/line[@checked])" />
-            <xsl:variable name="ulocs" select="count(file/line[@unchecked])" />
+            <xsl:variable name="clocs" select="count(class/line[@checked= 'exec'])" />
+            <xsl:variable name="ulocs" select="count(class/line[@checked= 'noexec'])" />
             <xsl:variable name="alocs" select="$clocs + $ulocs" />
             <xsl:variable name="locsRate" select="round($clocs div $alocs * 100)" />
 
@@ -163,12 +163,12 @@
           </xsl:for-each>
         </div>
 
-        <xsl:for-each select="/paths/path">
+        <xsl:for-each select="/packages/package">
           <xsl:sort select="@name" />
           <xsl:apply-templates select="." />
         </xsl:for-each>
 
-        <xsl:for-each select="/paths/path/file">
+        <xsl:for-each select="/packages/package/class">
           <xsl:sort select="@name" />
           <xsl:apply-templates select="." />
         </xsl:for-each>
@@ -177,14 +177,14 @@
     </html>
   </xsl:template>
 
-  <xsl:template match="path">
+  <xsl:template match="package">
     <div id="fs{string:replace(@name, '/', '_')}" class="folder">
       <h2><xsl:value-of select="@name" /></h2>
-      <xsl:for-each select="file">
+      <xsl:for-each select="class">
         <xsl:sort select="@name" />
 
-        <xsl:variable name="clocs" select="count(line[@checked])" />
-        <xsl:variable name="ulocs" select="count(line[@unchecked])" />
+        <xsl:variable name="clocs" select="count(line[@checked= 'exec'])" />
+        <xsl:variable name="ulocs" select="count(line[@checked= 'noexec'])" />
         <xsl:variable name="alocs" select="$clocs + $ulocs" />
         <xsl:variable name="locsRate" select="round($clocs div $alocs * 100)" />
 
@@ -203,13 +203,14 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="file">
-    <xsl:variable name="clocs" select="count(line[@checked])" />
-    <xsl:variable name="ulocs" select="count(line[@unchecked])" />
+  <xsl:template match="class">
+    <xsl:variable name="clocs" select="count(line[@checked= 'exec'])" />
+    <xsl:variable name="ulocs" select="count(line[@checked= 'noexec'])" />
     <xsl:variable name="alocs" select="$clocs + $ulocs" />
 
     <div id="fs{string:replace(concat(../@name, '/', string:replace(@name, '.', '_')), '/', '_')}" class="file">
-      <h2><xsl:value-of select="@name" /></h2>
+      <h2><xsl:value-of select="@name" /> <h3><span>from <xsl:value-of select="@fileName"/></span></h3></h2>
+
       <span>
         <xsl:value-of select="concat($clocs, ' of ', $alocs, ' lines checked')" />
       </span>
@@ -221,12 +222,12 @@
 
   <xsl:template match="line">
     <pre class="line">
-      <xsl:if test="@checked = 'checked'">
+      <xsl:if test="@checked = 'exec'">
         <xsl:attribute name="checked">
           <xsl:value-of select="'checked'" />
         </xsl:attribute>
       </xsl:if>
-      <xsl:if test="@unchecked = 'unchecked'">
+      <xsl:if test="@checked = 'noexec'">
         <xsl:attribute name="unchecked">
           <xsl:value-of select="'unchecked'" />
         </xsl:attribute>
