@@ -205,12 +205,9 @@
         $class= $cl->mapToClasS($fileName);
         if (!$class) continue;
 
-        if (0 == strncasecmp('dyn://', $fileName, 6)) {
-          continue;
-        }
-
         if ($this->includeInReport($fileName, $class->getName())) {
           $results[$class->getPackage()->getName()][$class->getName()]= array(
+            'class'    => $class,
             'fileName' => $fileName,
             'coverage' => $data
           );
@@ -229,8 +226,8 @@
           )));
 
           $num= 1;
-          $reader= new TextReader(new FileInputStream($meta['fileName']));
-          while (($line = $reader->readLine()) !== NULL) {
+          $bytes= $meta['class']->getClassLoader()->loadClassBytes($meta['class']->getName());
+          foreach (explode("\n", $bytes) as $line) {
             $lineNode = $classNode->addChild(new Node('line', new CData($line)));
 
             if (isset($meta['coverage'][$num])) {
