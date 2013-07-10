@@ -22,6 +22,7 @@
   class CoverageListener extends Object implements TestListener {
     private
       $paths        = array(),
+      $packages     = array(),
       $processor    = NULL,
       $reportFile   = 'coverage.html';
 
@@ -32,17 +33,27 @@
     );
 
     /**
-     * register a path to include in coverage report
+     * Register a path to include in coverage report
      *
      * @param string
      */
     #[@arg(name= 'registerPath')]
     public function setRegisterPath($path) {
-      $this->paths[]=  realpath($path);
+      $this->paths[]= realpath($path);
     }
 
     /**
-     * set path for the report file
+     * Register a package to check for coverage
+     *
+     * @param string $package
+     */
+    #[@arg(name= 'package')]
+    public function setRegisterPackage($package) {
+      $this->packages[]= $package;
+    }
+
+    /**
+     * Set path for the report file
      *
      * @param string
      */
@@ -51,6 +62,12 @@
       $this->reportFile=$reportFile;
     }
 
+    /**
+     * Create a new instance for a listener
+     *
+     * @param  io.streams.OutputStreamWriter $out
+     * @return var
+     */
     public function newInstance(OutputStreamWriter $out) {
       return new DefaultListener($out);
     }
@@ -146,6 +163,33 @@
     }
 
     /**
+     * Determine whether to include given class in report
+     *
+     * @param  string $fileName
+     * @param  string $className
+     * @return bool
+     */
+    protected function includeInReport($fileName, $className) {
+      $pathOk= empty($this->paths);
+      foreach ($this->paths as $path) {
+        if (substr($fileName, 0, strlen($path)) === $path) {
+          $pathOk= TRUE;
+          break;
+        }
+      }
+
+      $packageOk= empty($this->packages);
+      foreach ($this->packages as $package) {
+        if (0 == strncmp($package, $className, strlen($package))) {
+          $packageOk= TRUE;
+          break;
+        }
+      }
+
+      return $pathOk && $packageOk;
+    }
+
+    /**
      * Called when a test run finishes.
      *
      * @param   unittest.TestSuite suite
@@ -165,22 +209,7 @@
           continue;
         }
 
-        $include= TRUE;
-
-        // FIXME: This code is not platform-agnostic
-        // FIXME: This should be improved to use ClassLoader API
-        if (sizeof ($this->paths)) {
-          $include= FALSE;
-
-          foreach ($this->paths as $path) {
-            if (substr($fileName, 0, strlen($path)) === $path) {
-              $include= TRUE;
-              break;
-            }
-          }
-        }
-
-        if ($include) {
+        if ($this->includeInReport($fileName, $class->getName())) {
           $results[$class->getPackage()->getName()][$class->getName()]= array(
             'fileName' => $fileName,
             'coverage' => $data
