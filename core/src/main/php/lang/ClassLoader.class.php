@@ -382,6 +382,23 @@
     }
 
     /**
+     * Map a given filename to a class if such a class exists and
+     * can be loaded by a loader.
+     *
+     * @param  string $filename
+     * @return lang.XPClass
+     */
+    public function mapToClass($filename) {
+      foreach (self::$delegates as $delegate) {
+        if (($class= $delegate->mapToClass($filename))) {
+          return $class;
+        }
+      }
+
+      return NULL;
+    }
+
+    /**
      * Get package contents
      *
      * @param   string package

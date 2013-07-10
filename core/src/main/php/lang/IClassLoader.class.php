@@ -82,6 +82,14 @@
     public function getResourceAsStream($string);
 
     /**
+     * Map a filename to a class
+     *
+     * @param  string $filename
+     * @return lang.XPClass
+     */
+    public function mapToClass($filename);
+
+    /**
      * Returns a unique identifier for this class loader instance
      *
      * @return  string

@@ -90,6 +90,18 @@
       }
       return new File($fn);
     }
+
+    /**
+     * Map a given filename to a class if such a class exists and
+     * can be loaded by a loader.
+     *
+     * @param  string $filename
+     * @return lang.XPClass
+     */
+    public function mapToClass($fileName) {
+      // TBI
+      return NULL;
+    }
     
     /**
      * Checks whether this loader can provide the requested class

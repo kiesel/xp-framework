@@ -147,6 +147,18 @@
     public function getResourceAsStream($filename) {
       raise('lang.ElementNotFoundException', 'Could not load resource '.$filename);
     }
+
+    /**
+     * Map a given filename to a class if such a class exists and
+     * can be loaded by a loader.
+     *
+     * @param  string $filename
+     * @return lang.XPClass
+     */
+    public function mapToClass($filename) {
+      // TBI
+      return NULL;
+    }
     
     /**
      * Stream wrapper method stream_open

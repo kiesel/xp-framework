@@ -106,6 +106,36 @@
     }
 
     /**
+     * Map a given filename to a class if such a class exists and
+     * can be loaded by a loader.
+     *
+     * @param  string $filename
+     * @return lang.XPClass
+     */
+    public function mapToClass($filename) {
+
+      // If not ends with '.class.php', skip it immediately
+      if (xp::CLASS_FILE_EXT != substr($filename, -strlen(xp::CLASS_FILE_EXT))) {
+        return NULL;
+      }
+
+      // If not in path of classloader, this one cannot provide the file
+      if (0 != strncmp($filename, $this->path, strlen($this->path))) {
+        return NULL;
+      }
+
+      // Construct classloader-local path
+      $lname= substr($filename, strlen($this->path));
+      if (!$this->providesResource($lname)) {
+        return NULL;
+      }
+
+      // Convert lname to classname
+      $className= strtr(substr($lname, 0, -strlen(xp::CLASS_FILE_EXT)), DIRECTORY_SEPARATOR, '.');
+      return XPClass::forName($className);
+    }
+
+    /**
      * Fetch instance of classloader by the path to the archive
      *
      * @param   string path
