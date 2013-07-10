@@ -25,6 +25,12 @@
       $processor    = NULL,
       $reportFile   = 'coverage.html';
 
+    private static $coverageValues= array(
+      -2  => 'dead',     // line w/o executable code
+      -1  => 'noexec',   // not executed line
+      1   => 'exec'      // executed line
+    );
+
     /**
      * register a path to include in coverage report
      *
@@ -149,79 +155,69 @@
       $coverage= xdebug_get_code_coverage();
       xdebug_stop_code_coverage();
 
-      $results= array();
+      $results= array(); $cl= ClassLoader::getDefault();
       foreach ($coverage as $fileName => $data) {
+
+        $class= $cl->mapToClasS($fileName);
+        if (is('NULL', $class)) continue;
+
+        if (0 == strncasecmp('dyn://', $fileName, 6)) {
+          continue;
+        }
+
+        $include= TRUE;
 
         // FIXME: This code is not platform-agnostic
         // FIXME: This should be improved to use ClassLoader API
-        foreach ($this->paths as $path) {
-          if (0 == strncasecmp('dyn://', $fileName, 6)) {
-            $results['dynamic'][$fileName]= $data;
-            break;
-          }
+        if (sizeof ($this->paths)) {
+          $include= FALSE;
 
-          if (substr($fileName, 0, strlen($path)) !== $path) {
-            continue;
+          foreach ($this->paths as $path) {
+            if (substr($fileName, 0, strlen($path)) === $path) {
+              $include= TRUE;
+              break;
+            }
           }
+        }
 
-          // FIXME: This relies on filesystem calls
-          $results[dirname($fileName)][basename($fileName)]= $data;
-          break;
+        if ($include) {
+          $results[$class->getPackage()->getName()][$class->getName()]= array(
+            'fileName' => $fileName,
+            'coverage' => $data
+          );
         }
       }
 
-      foreach ($results as $paths => $files) {
-        Console::$out->writeLine(' * '.$paths);
-        foreach ($files as $name => $dummy) {
-          Console::$out->writeLine('   > '.$name);
-        }
-      }
-      Console::$out->writeLine();
+      $tree= new Tree('packages');
+      $tree->root()->setAttribute('created', date('Y-m-d H:i:s'));
+      foreach ($results as $package => $classes) {
+        $pkg= $tree->addChild(new Node('package', NULL, array('name' => $package)));
 
-      $tree= new Tree('paths');
-      $tree->root()->setAttribute('time', date('Y-m-d H:i:s'));
-      foreach ($results as $pathName => $files) {
-        $pathNode= new Node('path');
-        $pathNode->setAttribute('name', $pathName);
-
-        foreach ($files as $fileName => $data) {
-          Console::$out->writeLine('Adding ', $fileName);
-          $fileNode= new Node('file');
-          $fileNode->setAttribute('name', $fileName);
-
-          if (FALSE !== strpos($fileName, 'eval()\'d code')) {
-            continue;
-          }
-
-          if ('dynamic' == $pathName) {
-            continue;
-          }
+        foreach ($classes as $className => $meta) {
+          $classNode= $pkg->addChild(new Node('class', NULL, array(
+            'name'     => $className,
+            'fileName' => $meta['fileName']
+          )));
 
           $num= 1;
-          $reader= new TextReader(new FileInputStream($pathName.'/'.$fileName));
+          $reader= new TextReader(new FileInputStream($meta['fileName']));
           while (($line = $reader->readLine()) !== NULL) {
-            $lineNode = new Node('line', new CData($line));
-            if (isset($data[$num])) {
-              if (1 === $data[$num]) {
-                $lineNode->setAttribute('checked', 'checked');
-              } elseif (-1 === $data[$num]) {
-                $lineNode->setAttribute('unchecked', 'unchecked');
-              }
+            $lineNode = $classNode->addChild(new Node('line', new CData($line)));
+
+            if (isset($meta['coverage'][$num])) {
+              $lineNode->setAttribute('checked', self::$coverageValues[$meta['coverage'][$num]]);
             }
 
-            $fileNode->addChild($lineNode);
             ++$num;
           }
-
-          $pathNode->addChild($fileNode);
         }
-        $tree->root->addChild($pathNode);
       }
 
-      $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
-      $this->processor->run();
+      // $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
+      // $this->processor->run();
 
-      FileUtil::setContents(new File($this->reportFile), $this->processor->output());
+      // FileUtil::setContents(new File($this->reportFile), $this->processor->output());
+      FileUtil::setContents(new File($this->reportFile), $tree->getDeclaration()."\n".$tree->getSource(0));
     }
   }
 ?>
