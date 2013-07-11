@@ -8,8 +8,10 @@
     'unittest.TestListener',
     'io.streams.OutputStreamWriter',
     'xml.DomXSLProcessor',
+    'xml.Tree',
     'xml.Node',
     'io.FileUtil',
+    'webservices.json.JsonDecoder',
     'lang.Runtime',
     'lang.RuntimeError'
   );
@@ -21,10 +23,15 @@
    */
   class CoverageListener extends Object implements TestListener {
     private
-      $paths        = array(),
-      $packages     = array(),
-      $processor    = NULL,
-      $reportFile   = 'coverage.html';
+      $paths            = array(),
+      $packages         = array(),
+      $processor        = NULL,
+      $reportFileJson   = NULL,
+      $reportFileHtml   = NULL,
+      $reportFileXml    = NULL;
+
+    private $coverage = NULL;
+    private $xml      = NULL;
 
     private static $coverageValues= array(
       -2  => 'dead',     // line w/o executable code
@@ -57,9 +64,29 @@
      *
      * @param string
      */
-    #[@arg(name= 'reportFile')]
-    public function setReportFile($reportFile) {
-      $this->reportFile=$reportFile;
+    #[@arg(name= 'html')]
+    public function setHtml($reportFile) {
+      $this->reportFileHtml= $reportFile;
+    }
+
+    /**
+     * Set path for the report file
+     *
+     * @param string
+     */
+    #[@arg(name= 'xml')]
+    public function setXml($reportFile) {
+      $this->reportFileXml= $reportFile;
+    }
+
+    /**
+     * Set path for the report file
+     *
+     * @param string
+     */
+    #[@arg(name= 'json')]
+    public function setJson($reportFile) {
+      $this->reportFileJson= $reportFile;
     }
 
     /**
@@ -190,6 +217,88 @@
     }
 
     /**
+     * Store coverage results
+     *
+     * @param var $coverage
+     */
+    protected function setCoverage($coverage) {
+      $this->coverage= $coverage;
+    }
+
+    /**
+     * Write JSON output file, if requested.
+     *
+     */
+    public function writeOutputJson() {
+      if (!$this->reportFileJson) return;
+      $codec= new JSonDecoder();
+
+      FileUtil::setContents(new File($this->reportFileJson), $codec->encode($this->coverage));
+    }
+
+    /**
+     * Retrieve coverage as XML representation
+     *
+     * @return xml.Tree
+     */
+    protected function retrieveCoverageXml() {
+      if ($this->xml) return $this->xml;
+
+      $tree= new Tree('packages');
+      $tree->root()->setAttribute('created', date('Y-m-d H:i:s'));
+
+      foreach ($this->coverage as $package => $classes) {
+        $pkg= $tree->addChild(new Node('package', NULL, array('name' => $package)));
+
+        foreach ($classes as $className => $meta) {
+          $classNode= $pkg->addChild(new Node('class', NULL, array(
+            'name'     => $className,
+            'fileName' => $meta['fileName']
+          )));
+
+          $num= 1;
+          foreach (explode("\n", $meta['source']) as $line) {
+            $lineNode = $classNode->addChild(new Node('line', new CData($line)));
+
+            if (isset($meta['coverage'][$num])) {
+              $lineNode->setAttribute('checked', self::$coverageValues[$meta['coverage'][$num]]);
+            }
+
+            ++$num;
+          }
+        }
+      }
+      $this->xml= $tree;
+      return $this->xml;
+    }
+
+    /**
+     * Write XML output file, if requested
+     *
+     */
+    public function writeOutputXml() {
+      if (!$this->reportFileXml) return;
+
+      $tree= $this->retrieveCoverageXml();
+      FileUtil::setContents(new File($this->reportFileXml), $tree->getDeclaration()."\n".$tree->getSource(0));
+    }
+
+    /**
+     * Write HTML output file, if requested
+     *
+     */
+    public function writeOutputHtml() {
+      if (!$this->reportFileHtml) return;
+
+      $tree= $this->retrieveCoverageXml();
+
+      $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
+      $this->processor->run();
+
+      FileUtil::setContents(new File($this->reportFileHtml), $this->processor->output());
+    }
+
+    /**
      * Called when a test run finishes.
      *
      * @param   unittest.TestSuite suite
@@ -207,43 +316,17 @@
 
         if ($this->includeInReport($fileName, $class->getName())) {
           $results[$class->getPackage()->getName()][$class->getName()]= array(
-            'class'    => $class,
             'fileName' => $fileName,
-            'coverage' => $data
+            'coverage' => $data,
+            'source'   => $class->getClassLoader()->loadClassBytes($class->getName())
           );
         }
       }
+      $this->setCoverage($results);
 
-      $tree= new Tree('packages');
-      $tree->root()->setAttribute('created', date('Y-m-d H:i:s'));
-      foreach ($results as $package => $classes) {
-        $pkg= $tree->addChild(new Node('package', NULL, array('name' => $package)));
-
-        foreach ($classes as $className => $meta) {
-          $classNode= $pkg->addChild(new Node('class', NULL, array(
-            'name'     => $className,
-            'fileName' => $meta['fileName']
-          )));
-
-          $num= 1;
-          $bytes= $meta['class']->getClassLoader()->loadClassBytes($meta['class']->getName());
-          foreach (explode("\n", $bytes) as $line) {
-            $lineNode = $classNode->addChild(new Node('line', new CData($line)));
-
-            if (isset($meta['coverage'][$num])) {
-              $lineNode->setAttribute('checked', self::$coverageValues[$meta['coverage'][$num]]);
-            }
-
-            ++$num;
-          }
-        }
-      }
-
-      $this->processor->setXMLBuf($tree->getDeclaration()."\n".$tree->getSource());
-      $this->processor->run();
-
-      FileUtil::setContents(new File($this->reportFile), $this->processor->output());
-      // FileUtil::setContents(new File($this->reportFile), $tree->getDeclaration()."\n".$tree->getSource(0));
+      $this->writeOutputJson();
+      $this->writeOutputXml();
+      $this->writeOutputHtml();
     }
   }
 ?>
