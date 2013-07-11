@@ -99,7 +99,10 @@
      * @return lang.XPClass
      */
     public function mapToClass($fileName) {
-      // TBI
+      if (0 != strncmp($filename, $this->archive, strlen($this->archive))) return FALSE;
+
+      $lname= substr($filename, strlen($this->archive));
+
       return NULL;
     }
     

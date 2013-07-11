@@ -156,8 +156,9 @@
      * @return lang.XPClass
      */
     public function mapToClass($filename) {
-      // TBI
-      return NULL;
+      if (0 != strncmp($filename, 'dyn://', 6)) return NULL;
+
+      return XPClass::forName(substr($filename, 6));
     }
     
     /**
