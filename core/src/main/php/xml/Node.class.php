@@ -250,6 +250,14 @@
      * @return  string XML
      */
     public function getSource($indent= INDENT_WRAPPED, $encoding= xp::ENCODING, $inset= '') {
+      $map= array(
+        INDENT_DEFAULT => 'DefaultIndent',
+        INDENT_WRAPPED => 'WrappedIndent',
+        INDENT_NONE    => 'NoIndent'
+      );
+      $class= XPClass::forName('xml.'.$map[$indent].'NodeEmitter')->newInstance()->emit($this, $encoding, $inset);
+      return create(new NodeEmitter())->emit($this, $indent, $encoding, $inset);
+
       $xml= $inset.'<'.$this->name;
       $conv= xp::ENCODING != $encoding;
       
