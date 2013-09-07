@@ -255,7 +255,7 @@
         INDENT_WRAPPED => 'WrappedIndent',
         INDENT_NONE    => 'NoIndent'
       );
-      return XPClass::forName('xml.'.$map[$indent].'NodeEmitter')->newInstance()->emit($this, $encoding, $inset);
+      return XPClass::forName('xml.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
     }
     
     /**
