@@ -5,11 +5,12 @@
  *
  */
 
-  uses('xml.NodeEmitter');
+  uses('xml.io.NodeEmitter');
 
   class WrappedIndentNodeEmitter extends NodeEmitter {
 
     public function emit(Node $node, $inset= '') {
+      $encode= $this->encode;
       $xml= $inset.'<'.$node->getName();
 
       $content= $this->emitContent($node);
@@ -18,7 +19,7 @@
         $sep= (sizeof($node->attribute) < 3) ? '' : "\n".$inset;
         foreach ($node->attribute as $key => $value) {
           $xml.= $sep.' '.$key.'="'.htmlspecialchars(
-            $this->encode($value),
+            $encode($value),
             ENT_COMPAT,
             xp::ENCODING
           ).'"';
@@ -43,5 +44,12 @@
       }
       return $xml."\n".$inset.'</'.$node->name.">\n";
     }
+
+    public function emitTo(OutputStream $stream, Node $node, $inset= '') {
+      $this->stream= $stream;
+      $this->emitNode($node, $inset);
+    }
+
+    
   }
 ?>

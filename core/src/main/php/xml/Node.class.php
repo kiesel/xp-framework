@@ -250,12 +250,21 @@
      * @return  string XML
      */
     public function getSource($indent= INDENT_WRAPPED, $encoding= xp::ENCODING, $inset= '') {
-      $map= array(
+      static $map= array(
         INDENT_DEFAULT => 'DefaultIndent',
         INDENT_WRAPPED => 'WrappedIndent',
         INDENT_NONE    => 'NoIndent'
       );
-      return XPClass::forName('xml.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
+      return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
+    }
+
+    public function toDomDocument(DOMDocument $doc, DOMElement $current= NULL) {
+      $node= new DOMElement($this->getName());
+      foreach ($this->attributes as $name => $value) {
+        $node->setAttribute($name, $value);
+      }
+
+
     }
     
     /**
