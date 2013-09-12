@@ -255,7 +255,11 @@
         INDENT_WRAPPED => 'WrappedIndent',
         INDENT_NONE    => 'NoIndent'
       );
-      return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
+      // return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
+
+      $mos= new MemoryOutputStream();
+      XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emitTo($mos, $this, $inset);
+      return $mos->getBytes();
     }
 
     public function toDomDocument(DOMDocument $doc, DOMElement $current= NULL) {
