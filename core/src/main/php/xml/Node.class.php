@@ -257,7 +257,7 @@
       );
       // return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
 
-      $mos= new MemoryOutputStream();
+      $mos= new \io\streams\MemoryOutputStream();
       XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emitTo($mos, $this, $inset);
       return $mos->getBytes();
     }
