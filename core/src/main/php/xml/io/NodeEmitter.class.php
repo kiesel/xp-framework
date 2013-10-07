@@ -47,6 +47,10 @@
       }
     }
 
+    public function emitNode(Node $node, $inset= '') {
+      $this->stream->write($this->emit($node, $inset));
+    }
+
     public abstract function emit(Node $node, $inset= '');
 
     public abstract function emitTo(OutputStream $stream, Node $node, $inset= '');
