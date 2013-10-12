@@ -2,12 +2,19 @@
 /* This class is part of the XP framework
  *
  * $Id$
- *
  */
 
   uses('xml.io.NodeEmitter');
 
   class DefaultIndentNodeEmitter extends NodeEmitter {
+
+    /**
+     * Emits a node
+     *
+     * @param  xml.Node $node
+     * @param  string $inset
+     * @return string
+     */
     public function emit(Node $node, $inset= '') {
       $encode= $this->encode;
       $xml= $inset.'<'.$node->getName();
@@ -43,12 +50,5 @@
       }
       return $xml.'</'.$node->name.">\n";
     }
-
-    public function emitTo(OutputStream $stream, Node $node, $inset= '') {
-      $this->stream= $stream;
-      $this->emitNode($node, $inset);
-    }
-
-    
   }
 ?>

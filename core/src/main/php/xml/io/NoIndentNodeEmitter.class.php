@@ -2,12 +2,19 @@
 /* This class is part of the XP framework
  *
  * $Id$
- *
  */
 
   uses('xml.io.NodeEmitter');
 
   class NoIndentNodeEmitter extends NodeEmitter {
+
+    /**
+     * Emits a node
+     *
+     * @param  xml.Node $node
+     * @param  string $inset
+     * @return string
+     */
     public function emit(Node $node, $inset= '') {
       $encode= $this->encode;
       $xml= $inset.'<'.$node->getName();
@@ -26,31 +33,6 @@
         $xml.= $this->emit($child, $inset);
       }
       return $xml.'</'.$node->name.'>';
-    }
-
-    public function emitTo(OutputStream $stream, Node $node, $inset= '') {
-      $this->stream= $stream;
-      $this->emitNode($node, $inset);
-    }
-
-    protected function emitNode(Node $node, $inset= '') {
-      $encode= $this->encode;
-      $this->stream->write($inset.'<'.$node->name);
-
-      $content= $this->emitContent($node);
-
-      foreach ($node->attribute as $key => $value) {
-        $this->stream->write(' '.$key.'="'.htmlspecialchars(
-          $encode($value),
-          ENT_COMPAT,
-          xp::ENCODING
-        ).'"');
-      }
-      $this->stream->write('>'.$this->emitContent($node));
-      foreach ($node->children as $child) {
-        $this->emitNode($child, $inset);
-      }
-      $this->stream->write('</'.$node->name.'>');
     }
   }
 ?>
