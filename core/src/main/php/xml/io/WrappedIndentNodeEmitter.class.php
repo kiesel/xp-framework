@@ -15,7 +15,7 @@
      * @param  string $inset
      * @return string
      */
-    public function emit(Node $node, $inset= '') {
+    protected function emitNode($node, $inset) {
       $encode= $this->encode;
       $xml= $inset.'<'.$node->getName();
 
@@ -44,7 +44,7 @@
       if ($node->children) {
         $xml.= "\n";
         foreach ($node->children as $child) {
-          $xml.= $this->emit($child, $inset.'  ');
+          $xml.= $this->emitNode($child, $inset.'  ');
         }
         $xml= substr($xml, 0, -1).$inset;
       }

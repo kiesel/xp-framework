@@ -30,7 +30,7 @@
       }
     }
 
-    protected function emitContent(Node $node) {
+    protected function emitContent($node) {
       $encode= $this->encode;
       if ('string' == ($type= gettype($node->content))) {
         return $encode(htmlspecialchars($node->content, ENT_COMPAT, xp::ENCODING));
@@ -50,6 +50,8 @@
       }
     }
 
+    protected abstract function emitNode($node, $inset);
+
     /**
      * Emits a node
      *
@@ -57,7 +59,9 @@
      * @param  string $inset
      * @return string
      */
-    public abstract function emit(Node $node, $inset= '');
+    public function emit(Node $node, $inset= '') {
+      return $this->emitNode($node, $inset);
+    }
 
     /**
      * Emits a node to a given stream
