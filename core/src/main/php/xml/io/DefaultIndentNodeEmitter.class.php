@@ -6,6 +6,20 @@
 
   uses('xml.io.NodeEmitter');
 
+  /**
+   * Default emitter
+   *
+   * <pre>
+   *   <item>  
+   *     <title>Website created</title>
+   *     <link/>
+   *     <description>The first version of the XP web site is online</description>
+   *     <dc:date>2002-12-27T13:10:00</dc:date>
+   *   </item>
+   * </pre>
+   *
+   * @see  xp://xml.io.NodeEmitter
+   */
   class DefaultIndentNodeEmitter extends NodeEmitter {
 
     /**

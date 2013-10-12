@@ -210,40 +210,9 @@
     /**
      * Retrieve XML representation
      *
-     * Setting indent to 0 (INDENT_DEFAULT) yields this result:
-     * <pre>
-     *   <item>  
-     *     <title>Website created</title>
-     *     <link/>
-     *     <description>The first version of the XP web site is online</description>
-     *     <dc:date>2002-12-27T13:10:00</dc:date>
-     *   </item>
-     * </pre>
-     *
-     * Setting indent to 1 (INDENT_WRAPPED) yields this result:
-     * <pre>
-     *   <item>
-     *     <title>
-     *       Website created
-     *     </title>
-     *     <link/>
-     *     <description>
-     *       The first version of the XP web site is online
-     *     </description>
-     *     <dc:date>
-     *       2002-12-27T13:10:00
-     *     </dc:date>  
-     *   </item>
-     * </pre>
-     *
-     * Setting indent to 2 (INDENT_NONE) yields this result (wrapped for readability,
-     * returned XML is on one line):
-     * <pre>
-     *   <item><title>Website created</title><link></link><description>The 
-     *   first version of the XP web site is online</description><dc:date>
-     *   2002-12-27T13:10:00</dc:date></item>
-     * </pre>
-     *
+     * @see     xp://xml.io.DefaultIndentNodeEmitter
+     * @see     xp://xml.io.WrappedIndentNodeEmitter
+     * @see     xp://xml.io.NoIndentNodeEmitter
      * @param   int indent default INDENT_WRAPPED
      * @param   string encoding defaults to XP default encoding
      * @param   string inset default ''
@@ -255,11 +224,7 @@
         INDENT_WRAPPED => 'WrappedIndent',
         INDENT_NONE    => 'NoIndent'
       );
-      // return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
-
-      $mos= new \io\streams\MemoryOutputStream();
-      XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emitTo($mos, $this, $inset);
-      return $mos->getBytes();
+      return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
     }
 
     public function toDomDocument(DOMDocument $doc, DOMElement $current= NULL) {
@@ -267,8 +232,6 @@
       foreach ($this->attributes as $name => $value) {
         $node->setAttribute($name, $value);
       }
-
-
     }
     
     /**
