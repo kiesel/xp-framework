@@ -71,7 +71,7 @@
      * @param  string $inset
      */
     public function emitTo(OutputStream $stream, Node $node, $inset= '') {
-      $stream->write($this->emit($node, $inset));
+      $stream->write($this->emitNode($node, $inset));
     }
   }
 ?>
