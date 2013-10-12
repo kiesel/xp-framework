@@ -34,7 +34,7 @@
       }
 
       // No content and no children => close tag
-      if (0 == strlen($content)) {
+      if (0 === strlen($content)) {
         if (!$node->children) return $xml."/>\n";
         $xml.= '>';
       } else {
