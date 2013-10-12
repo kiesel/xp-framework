@@ -33,7 +33,7 @@
       $encode= $this->encode;
       $xml= $inset.'<'.$node->getName();
 
-      $content= $this->emitContent($node);
+      $content= $this->contentOf($node);
       
       if ($node->attribute) {
         $sep= (sizeof($node->attribute) < 3) ? '' : "\n".$inset;

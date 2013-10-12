@@ -30,7 +30,7 @@
       $encode= $this->encode;
       $xml= $inset.'<'.$node->getName();
 
-      $content= $this->emitContent($node);
+      $content= $this->contentOf($node);
 
       foreach ($node->attribute as $key => $value) {
         $xml.= ' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"';

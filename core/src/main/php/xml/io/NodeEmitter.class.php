@@ -35,13 +35,13 @@
     }
 
     /**
-     * Emits node content
+     * Gets node content as XML string
      *
      * @param  xml.Node $node
      * @param  string $inset
      * @return string
      */
-    protected function emitContent($node) {
+    protected function contentOf($node) {
       $encode= $this->encode;
       if ('string' === ($type= gettype($node->content))) {
         return htmlspecialchars($encode($node->content), ENT_COMPAT, $this->encoding);
