@@ -28,18 +28,21 @@
      */
     protected function emitNode($node, $inset) {
       $encode= $this->encode;
-      $xml= $inset.'<'.$node->getName();
 
-      $content= $this->contentOf($node);
-
+      // Tag, attributes and content
+      echo $inset, '<', $node->getName();
       foreach ($node->attribute as $key => $value) {
-        $xml.= ' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"';
+        echo ' ', $key, '="', htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding), '"';
       }
-      $xml.= '>'.$content;
+      echo '>', $this->contentOf($node);
+
+      // Children
       foreach ($node->children as $child) {
-        $xml.= $this->emitNode($child, $inset);
+        $this->emitNode($child, $inset);
       }
-      return $xml.'</'.$node->name.'>';
+
+      // Closing tag
+      echo '</', $node->getName(), '>';
     }
   }
 ?>

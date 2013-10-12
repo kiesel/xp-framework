@@ -31,34 +31,35 @@
      */
     protected function emitNode($node, $inset) {
       $encode= $this->encode;
-      $xml= $inset.'<'.$node->getName();
-
-      $content= $this->contentOf($node);
-      
+      echo $inset, '<', $node->getName();
       if ($node->attribute) {
         $sep= (sizeof($node->attribute) < 3) ? '' : "\n".$inset;
         foreach ($node->attribute as $key => $value) {
-          $xml.= $sep.' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"';
+          echo $sep, ' ', $key, '="', htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding), '"';
         }
-        $xml.= $sep;
+        echo $sep;
       }
 
       // No content and no children => close tag
+      $content= trim($this->contentOf($node));
       if (0 === strlen($content)) {
-        if (!$node->children) return $xml."/>\n";
-        $xml.= '>';
+        if (!$node->children) {
+          echo "/>\n";
+          return;
+        }
+        echo '>';
       } else {
-        $xml.= '>'.trim($content);
+        echo '>', $content;
       }
 
       if ($node->children) {
-        $xml.= $inset."\n";
+        echo $inset, "\n";
         foreach ($node->children as $child) {
-          $xml.= $this->emitNode($child, $inset.'  ');
+          $this->emitNode($child, $inset.'  ');
         }
-        $xml= $xml.$inset;
+        echo $inset;
       }
-      return $xml.'</'.$node->name.">\n";
+      echo '</', $node->getName(), ">\n";
     }
   }
 ?>

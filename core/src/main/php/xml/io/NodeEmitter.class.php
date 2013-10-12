@@ -22,7 +22,7 @@
      *
      * @param string $encoding The target encoding
      */
-    public function __construct($encoding) {
+    public function __construct($encoding= xp::ENCODING) {
       $this->encoding= $encoding;
 
       if (xp::ENCODING === $this->encoding) {
@@ -78,7 +78,11 @@
      * @return string
      */
     public function emit(Node $node, $inset= '') {
-      return $this->emitNode($node, $inset);
+      ob_start();
+      $this->emitNode($node, $inset);
+      $xml= ob_get_contents();
+      ob_end_clean();
+      return $xml;
     }
 
     /**
@@ -89,7 +93,9 @@
      * @param  string $inset
      */
     public function emitTo(OutputStream $stream, Node $node, $inset= '') {
-      $stream->write($this->emitNode($node, $inset));
+      ob_start(array($stream, 'write'));
+      $this->emitNode($node, $inset);
+      ob_end_clean();
     }
   }
 ?>
