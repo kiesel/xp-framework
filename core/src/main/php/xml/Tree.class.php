@@ -104,13 +104,6 @@
       return $this->root->getSource($indent, $this->encoding, '');
     }
 
-    public function toDomDocument() {
-      $doc= new DOMDocument('1.0', $this->encoding);
-      $doc->appendChild($this->root->toDomNode());
-
-      return $doc;
-    }
-
     /**
      * Sets root node and returns this tree
      *

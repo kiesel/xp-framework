@@ -227,13 +227,6 @@
       return XPClass::forName('xml.io.'.$map[$indent].'NodeEmitter')->newInstance($encoding)->emit($this, $inset);
     }
 
-    public function toDomDocument(DOMDocument $doc, DOMElement $current= NULL) {
-      $node= new DOMElement($this->getName());
-      foreach ($this->attributes as $name => $value) {
-        $node->setAttribute($name, $value);
-      }
-    }
-    
     /**
      * Add a child node
      *
