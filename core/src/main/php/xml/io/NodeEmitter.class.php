@@ -40,7 +40,7 @@
           : $node->content
         ;
       } else if ($node->content instanceof PCData) {
-        return $encode($node->content->pcdata, $this->encoding);
+        return $encode($node->content->pcdata);
       } else if ($node->content instanceof CData) {
         return '<![CDATA['.str_replace(']]>', ']]]]><![CDATA[>', $encode($node->content->cdata)).']]>';
       } else if ($node->content instanceof String) {
