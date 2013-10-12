@@ -33,7 +33,7 @@
     protected function emitContent($node) {
       $encode= $this->encode;
       if ('string' === ($type= gettype($node->content))) {
-        return $encode(htmlspecialchars($node->content, ENT_COMPAT, xp::ENCODING));
+        return htmlspecialchars($encode($node->content), ENT_COMPAT, $this->encoding);
       } else if ('float' === $type) {
         return ($node->content - floor($node->content) == 0)
           ? number_format($node->content, 0, NULL, NULL)

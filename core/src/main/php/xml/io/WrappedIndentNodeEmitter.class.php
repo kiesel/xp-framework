@@ -24,11 +24,7 @@
       if ($node->attribute) {
         $sep= (sizeof($node->attribute) < 3) ? '' : "\n".$inset;
         foreach ($node->attribute as $key => $value) {
-          $xml.= $sep.' '.$key.'="'.htmlspecialchars(
-            $encode($value),
-            ENT_COMPAT,
-            xp::ENCODING
-          ).'"';
+          $xml.= $sep.' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding);
         }
         $xml.= $sep;
       }

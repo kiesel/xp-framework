@@ -22,11 +22,7 @@
       $content= $this->emitContent($node);
 
       foreach ($node->attribute as $key => $value) {
-        $xml.= ' '.$key.'="'.htmlspecialchars(
-          $encode($value),
-          ENT_COMPAT,
-          xp::ENCODING
-        ).'"';
+        $xml.= ' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"';
       }
       $xml.= '>'.$content;
       foreach ($node->children as $child) {
