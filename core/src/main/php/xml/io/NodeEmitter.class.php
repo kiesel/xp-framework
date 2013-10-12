@@ -4,11 +4,15 @@
  * $Id$
  */
 
-  uses(
-    'xml.Node',
-    'io.streams.OutputStream'
-  );
-  
+  uses('xml.Node', 'io.streams.OutputStream');
+
+  /**
+   * Abstract base class for node emitters
+   *
+   * @see  xp://xml.io.DefaultIndentNodeEmitter
+   * @see  xp://xml.io.WrappedIndentNodeEmitter
+   * @see  xp://xml.io.NoIndentNodeEmitter
+   */
   abstract class NodeEmitter extends Object {
     protected $encoding= NULL;
     public $encode= NULL;
@@ -30,6 +34,13 @@
       }
     }
 
+    /**
+     * Emits node content
+     *
+     * @param  xml.Node $node
+     * @param  string $inset
+     * @return string
+     */
     protected function emitContent($node) {
       $encode= $this->encode;
       if ('string' === ($type= gettype($node->content))) {
@@ -50,6 +61,13 @@
       }
     }
 
+    /**
+     * Emits node instances. Overwritten in subclasses.
+     *
+     * @param  xml.Node $node
+     * @param  string $inset
+     * @return string
+     */
     protected abstract function emitNode($node, $inset);
 
     /**
