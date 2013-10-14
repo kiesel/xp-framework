@@ -64,11 +64,12 @@
     /**
      * Emits node instances. Overwritten in subclasses.
      *
+     * @param  io.streams.OutputStream $stream
      * @param  xml.Node $node
      * @param  string $inset
      * @return string
      */
-    protected abstract function emitNode($node, $inset);
+    protected abstract function emitNode($stream, $node, $inset);
 
     /**
      * Emits a node
@@ -78,7 +79,9 @@
      * @return string
      */
     public function emit(Node $node, $inset= '') {
-      return $this->emitNode($node, $inset);
+      $mem= new \io\streams\MemoryOutputStream();
+      $this->emitNode($mem, $node, $inset);
+      return $mem->getBytes();
     }
 
     /**
@@ -89,7 +92,7 @@
      * @param  string $inset
      */
     public function emitTo(OutputStream $stream, Node $node, $inset= '') {
-      $stream->write($this->emitNode($node, $inset));
+      $this->emitNode($stream, $node, $inset);
     }
   }
 ?>

@@ -22,24 +22,29 @@
     /**
      * Emits a node
      *
+     * @param  io.streams.OutputStream $stream
      * @param  xml.Node $node
      * @param  string $inset
      * @return string
      */
-    protected function emitNode($node, $inset) {
+    protected function emitNode($stream, $node, $inset) {
       $encode= $this->encode;
-      $xml= $inset.'<'.$node->getName();
+      $name= $node->getName();
 
-      $content= $this->contentOf($node);
-
+      // Node, attributes, content
+      $stream->write($inset.'<'.$name);
       foreach ($node->attribute as $key => $value) {
-        $xml.= ' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"';
+        $stream->write(' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"');
       }
-      $xml.= '>'.$content;
+      $stream->write('>'.$this->contentOf($node));
+
+      // Children
       foreach ($node->children as $child) {
-        $xml.= $this->emitNode($child, $inset);
+        $this->emitNode($stream, $child, $inset);
       }
-      return $xml.'</'.$node->name.'>';
+
+      // Closing tag
+      $stream->write('</'.$name.'>');
     }
   }
 ?>

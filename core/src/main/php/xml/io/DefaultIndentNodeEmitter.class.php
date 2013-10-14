@@ -29,36 +29,39 @@
      * @param  string $inset
      * @return string
      */
-    protected function emitNode($node, $inset) {
+    protected function emitNode($stream, $node, $inset) {
       $encode= $this->encode;
-      $xml= $inset.'<'.$node->getName();
+      $name= $node->getName();
 
-      $content= $this->contentOf($node);
-      
+      $stream->write($inset.'<'.$node->getName());
       if ($node->attribute) {
         $sep= (sizeof($node->attribute) < 3) ? '' : "\n".$inset;
         foreach ($node->attribute as $key => $value) {
-          $xml.= $sep.' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"';
+          $stream->write($sep.' '.$key.'="'.htmlspecialchars($encode($value), ENT_COMPAT, $this->encoding).'"');
         }
-        $xml.= $sep;
+        $stream->write($sep);
       }
 
       // No content and no children => close tag
+      $content= trim($this->contentOf($node));
       if (0 === strlen($content)) {
-        if (!$node->children) return $xml."/>\n";
-        $xml.= '>';
+        if (!$node->children) {
+          $stream->write("/>\n");
+          return;
+        }
+        $stream->write('>');
       } else {
-        $xml.= '>'.trim($content);
+        $stream->write('>'.$content);
       }
 
       if ($node->children) {
-        $xml.= $inset."\n";
+        $stream->write($inset."\n");
         foreach ($node->children as $child) {
-          $xml.= $this->emitNode($child, $inset.'  ');
+          $this->emitNode($stream, $child, $inset.'  ');
         }
-        $xml= $xml.$inset;
+        $stream->write($inset);
       }
-      return $xml.'</'.$node->name.">\n";
+      $stream->write('</'.$name.">\n");
     }
   }
 ?>
