@@ -2,7 +2,6 @@
 
 use unittest\TestCase;
 use xp\scriptlet\Runner;
-use xml\Stylesheet;
 use xml\Node;
 use util\log\Traceable;
 use util\log\BufferedAppender;
@@ -82,7 +81,7 @@ class RunnerTest extends TestCase {
 
       protected function _response() {
         $res= parent::_response();
-        $stylesheet= create(new Stylesheet())
+        $stylesheet= create(new \xml\Stylesheet())
           ->withEncoding("iso-8859-1")
           ->withOutputMethod("xml")
           ->withTemplate(create(new XslTemplate())->matching("/")
@@ -296,7 +295,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function welcomeApplication() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet'),
+      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet')->withRoute('/'),
       $this->newRunner()->applicationAt('/')
     );
   }
@@ -308,7 +307,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function welcomeApplicationAtEmptyUrl() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet'),
+      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet')->withRoute('/'),
       $this->newRunner()->applicationAt('')
     );
   }
@@ -320,7 +319,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function welcomeApplicationAtDoubleSlash() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet'),
+      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet')->withRoute('/'),
       $this->newRunner()->applicationAt('//')
     );
   }
@@ -332,7 +331,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function errorApplication() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('error'))->withConfig('/var/www/etc')->withScriptlet('ErrorScriptlet'),
+      create(new \xp\scriptlet\WebApplication('error'))->withConfig('/var/www/etc')->withScriptlet('ErrorScriptlet')->withRoute('/error'),
       $this->newRunner()->applicationAt('/error')
     );
   }
@@ -344,7 +343,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function welcomeApplicationAtUrlEvenWithErrorInside() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet'),
+      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet')->withRoute('/'),
       $this->newRunner()->applicationAt('/url/with/error/inside')
     );
   }
@@ -356,7 +355,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function welcomeApplicationAtUrlBeginningWithErrors() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet'),
+      create(new \xp\scriptlet\WebApplication('welcome'))->withConfig('/var/www/etc')->withScriptlet('WelcomeScriptlet')->withRoute('/'),
       $this->newRunner()->applicationAt('/errors')
     );
   }
@@ -368,7 +367,7 @@ class RunnerTest extends TestCase {
   #[@test]
   public function errorApplicationAtErrorPath() {
     $this->assertEquals(
-      create(new \xp\scriptlet\WebApplication('error'))->withConfig('/var/www/etc')->withScriptlet('ErrorScriptlet'),
+      create(new \xp\scriptlet\WebApplication('error'))->withConfig('/var/www/etc')->withScriptlet('ErrorScriptlet')->withRoute('/error'),
       $this->newRunner()->applicationAt('/error/happened')
     );
   }

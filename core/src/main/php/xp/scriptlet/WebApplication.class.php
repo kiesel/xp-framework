@@ -10,6 +10,7 @@ class WebApplication extends \lang\Object {
   protected $name = '';
   protected $config = '';
   protected $scriptlet = '';
+  protected $route = '';
   protected $arguments = array();
   protected $environment = array();
   protected $debug = 0;
@@ -140,6 +141,39 @@ class WebApplication extends \lang\Object {
   }
 
   /**
+   * Sets this application's route class name
+   *
+   * @param   string route
+   */
+  public function setRoute($route) {
+    $this->route= $route;
+  }
+
+  /**
+   * Sets this application's route class name
+   *
+   * @param   string route
+   * @return  xp.Route.WebApplication this
+   */
+  public function withRoute($route) {
+    $this->route= $route;
+    return $this;
+  }
+
+  /**
+   * Returns this application's route class
+   *
+   * @return  string
+   */
+  public function getRoute() {
+    return $this->route;
+  }
+
+  public function handlesRoute($url) {
+    return ('/' === $this->route || preg_match('#^('.preg_quote($this->route, '#').')($|/.+)#', $url));
+  }
+
+  /**
    * Sets this application's arguments
    *
    * @param   string[] arguments
@@ -207,6 +241,7 @@ class WebApplication extends \lang\Object {
       "%s(%s)@{\n".
       "  [config       ] %s\n".
       "  [scriptlet    ] %s\n".
+      "  [route        ] %s\n".
       "  [debug        ] %s\n".
       "  [arguments    ] [%s]\n".
       "  [environment  ] %s\n".
@@ -215,6 +250,7 @@ class WebApplication extends \lang\Object {
       $this->name,
       $this->config,
       $this->scriptlet,
+      $this->route,
       implode(' | ', WebDebug::namesOf($this->debug)),
       implode(', ', $this->arguments),
       \xp::stringOf($this->environment, '  ')
@@ -233,6 +269,7 @@ class WebApplication extends \lang\Object {
       $this->name === $cmp->name && 
       $this->config === $cmp->config && 
       $this->scriptlet === $cmp->scriptlet && 
+      $this->route === $cmp->route &&
       $this->debug === $cmp->debug && 
       $this->arguments === $cmp->arguments &&
       $this->environment === $cmp->environment

@@ -52,9 +52,7 @@ class Runner extends \lang\Object {
    */
   public function configure(\util\Properties $conf) {
     $conf= new WebConfiguration($conf);
-    foreach ($conf->mappedApplications($this->profile) as $url => $application) {
-      $this->mapApplication($url, $application);
-    }
+    $this->mappings= $conf->mappedApplications($this->profile);
   }
   
   /**
@@ -83,9 +81,10 @@ class Runner extends \lang\Object {
    */
   public function applicationAt($url) {
     $url= '/'.ltrim($url, '/');
+
     foreach ($this->mappings as $pattern => $application) {
-      if ('/' !== $pattern && !preg_match('#^('.preg_quote($pattern, '#').')($|/.+)#', $url)) continue;
-      return $application;
+      if ($application->handlesRoute($url)) return $application;
+      // if ('/' !== $pattern && !preg_match('#^('.preg_quote($pattern, '#').')($|/.+)#', $url)) continue;
     }
 
     throw new \lang\IllegalArgumentException('Could not find app responsible for request to '.$url);
@@ -108,7 +107,7 @@ class Runner extends \lang\Object {
    * @return  xp.scriptlet.WebApplication the added application
    */
   public function mapApplication($url, WebApplication $application) {
-    $this->mappings[$url]= $application;
+    $this->mappings[]= $application->withRoute($url);
     return $application;
   }
 

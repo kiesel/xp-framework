@@ -93,6 +93,9 @@ class WebConfiguration extends \lang\Object {
     // Configuration base
     $app->setConfig($this->readString($profile, $section, 'prop-base', '{WEBROOT}/etc'));
 
+    // Route
+    $app->setRoute($url);
+
     // Determine debug level
     $flags= WebDebug::NONE;
     foreach ($this->readArray($profile, $section, 'debug', array()) as $lvl) {
@@ -124,11 +127,11 @@ class WebConfiguration extends \lang\Object {
     if (null === $mappings) {
       foreach ($this->prop->readSection('app') as $key => $url) {
         if (0 !== strncmp('map.', $key, 4)) continue;
-        $apps[$url]= $this->configuredApp($profile, substr($key, 4), $url);
+        $apps[]= $this->configuredApp($profile, substr($key, 4), $url);
       }
     } else {
       foreach ($mappings->keys() as $url) {
-        $apps[$url]= $this->configuredApp($profile, $mappings->get($url), $url);
+        $apps[]= $this->configuredApp($profile, $mappings->get($url), $url);
       }
     }
 
