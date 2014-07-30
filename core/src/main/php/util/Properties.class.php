@@ -288,6 +288,41 @@
         : $default
       ;
     }
+
+    protected function out($value) {
+      if (is_array($value)) {
+        $out= array();
+
+        foreach ($value as $key => $value) {
+          $out[$this->out($key)]= $this->out($value);
+        }
+
+        return $out;
+      } else if (is_string($value)) {
+        return preg_replace_callback('/\$\{([^:]+):([^\}]+)\}/', function($match) {
+          switch ($match[1]) {
+            case 'env': {
+              return $this->getEnvValue($match[2]);
+            }
+
+            default: {
+              throw new IllegalArgumentException('Unsupported replacement type "'.$match[1].'" of "'.$match[0].'"');
+            }
+          }
+        }, $value);
+      }
+
+      return $value;
+    }
+
+    protected function getEnvValue($name) {
+      $out= getenv($name);
+      if (FALSE === $out) {
+        throw raise('lang.ElementNotFoundException', 'Env value "'.$name.'" was not found.');
+      }
+
+      return $out;
+    }
     
     /**
      * Read a value as string
@@ -299,10 +334,10 @@
      */ 
     public function readString($section, $key, $default= '') {
       $this->_load();
-      return isset($this->_data[$section][$key])
+      return $this->out(isset($this->_data[$section][$key])
         ? $this->_data[$section][$key]
         : $default
-      ;
+      );
     }
     
     /**
@@ -319,11 +354,11 @@
       // New: key[]="a" or key[0]="a"
       // Old: key="" (an empty array) or key="a|b|c"
       if (!isset($this->_data[$section][$key])) {
-        return $default;
+        return $this->out($default);
       } else if (is_array($this->_data[$section][$key])) {
-        return $this->_data[$section][$key];
+        return $this->out($this->_data[$section][$key]);
       } else {
-        return '' == $this->_data[$section][$key] ? array() : explode('|', $this->_data[$section][$key]);
+        return $this->out('' == $this->_data[$section][$key] ? array() : explode('|', $this->_data[$section][$key]));
       }
     }
     

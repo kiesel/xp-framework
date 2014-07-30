@@ -12,6 +12,14 @@ use util\Hashmap;
  */
 abstract class AbstractPropertiesTest extends TestCase {
 
+  public function setUp() {
+    putenv('ENV_VALUE=123abc45');
+  }
+
+  public function tearDown() {
+    putenv('ENV_VALUE=""');
+  }
+
   /**
    * Create a new properties object from a string source
    *
@@ -108,8 +116,52 @@ string2="string"
     
     $this->assertEquals('string', $p->readString('section', 'string1'));
     $this->assertEquals('string', $p->readString('section', 'string2'));
-  }    
+  }
+
+  /**
+   * Test string reading w/ environment variables
+   *
+   */
+  #[@test]
+  public function readString_replaces_environment_references() {
+    $p= $this->newPropertiesFrom('
+[section]
+string1=${env:ENV_VALUE}
+string2="${env:ENV_VALUE}"
+    ');
+
+    $this->assertEquals('123abc45', $p->readString('section', 'string1'));
+    $this->assertEquals('123abc45', $p->readString('section', 'string2'));
+  }
   
+  /**
+   * Test string reading w/ environment variables within strings
+   *
+   */
+  #[@test]
+  public function readString_replaces_environment_references_within_strings() {
+    $p= $this->newPropertiesFrom('
+[section]
+string1="foobar${env:ENV_VALUE}barbaz"
+    ');
+
+    $this->assertEquals('foobar123abc45barbaz', $p->readString('section', 'string1'));
+  }
+
+  /**
+   * Test string reading w/ environment variables within strings
+   *
+   */
+  #[@test, @expect('lang.ElementNotFoundException')]
+  public function readString_replaces_environment_references_with_empty_string_if_not_exist() {
+    $p= $this->newPropertiesFrom('
+[section]
+string1="foobar${env:NO_VALUE}barbaz"
+    ');
+
+    $this->assertEquals('foobarbarbaz', $p->readString('section', 'string1'));
+  }
+
   /**
    * Test simple reading of arrays
    *
@@ -121,6 +173,19 @@ string2="string"
 array="foo|bar|baz"
     ');
     $this->assertEquals(array('foo', 'bar', 'baz'), $p->readArray('section', 'array'));
+  }
+
+  /**
+   * Test simple reading of arrays
+   *
+   */
+  #[@test]
+  public function readArray_replaces_environment_references() {
+    $p= $this->newPropertiesFrom('
+[section]
+array="foo${env:ENV_VALUE}|bar|baz"
+    ');
+    $this->assertEquals(array('foo123abc45', 'bar', 'baz'), $p->readArray('section', 'array'));
   }
 
   /**
@@ -154,7 +219,23 @@ hash="foo:bar|bar:foo"
       new Hashmap(array('foo' => 'bar', 'bar' => 'foo')),
       $p->readHash('section', 'hash')
     );
-  }   
+  }
+
+  /**
+   * Test simple reading of hashes
+   *
+   */
+  #[@test]
+  public function readHash_replaces_environment_references() {
+    $p= $this->newPropertiesFrom('
+[section]
+hash="foo:bar${env:ENV_VALUE}|bar${env:ENV_VALUE}:foo"
+    ');
+    $this->assertEquals(
+      new Hashmap(array('foo' => 'bar123abc45', 'bar123abc45' => 'foo')),
+      $p->readHash('section', 'hash')
+    );
+  }
   
   /**
    * Test simple reading of range
@@ -561,7 +642,8 @@ key=Ãœbercoder
   #[@test]
   public function utf16BeBom() {
     $p= $this->newPropertiesFrom("\376\377".trim('
- [ s e c t i o n ]  
+ [ s e c t i o n ] 
+ 
  k e y = Ü b e r c o d e r
     ', " \r\n"));
     $this->assertEquals('Übercoder', $p->readString('section', 'key'));
@@ -574,7 +656,8 @@ key=Ãœbercoder
   #[@test]
   public function utf16LeBom() {
     $p= $this->newPropertiesFrom("\377\376".trim('
-[ s e c t i o n ]  
+[ s e c t i o n ] 
+ 
  k e y = Ü b e r c o d e r 
     ', " \r\n"));
     $this->assertEquals('Übercoder', $p->readString('section', 'key'));
