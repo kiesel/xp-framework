@@ -169,6 +169,12 @@ class WebApplication extends \lang\Object {
     return $this->route;
   }
 
+  /**
+   * Decide whether the application can handle the given route
+   *
+   * @param  string $url
+   * @return boolean
+   */
   public function handlesRoute($url) {
     return ('/' === $this->route || preg_match('#^('.preg_quote($this->route, '#').')($|/.+)#', $url));
   }

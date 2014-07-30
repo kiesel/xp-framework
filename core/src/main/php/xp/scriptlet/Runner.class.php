@@ -84,7 +84,6 @@ class Runner extends \lang\Object {
 
     foreach ($this->mappings as $pattern => $application) {
       if ($application->handlesRoute($url)) return $application;
-      // if ('/' !== $pattern && !preg_match('#^('.preg_quote($pattern, '#').')($|/.+)#', $url)) continue;
     }
 
     throw new \lang\IllegalArgumentException('Could not find app responsible for request to '.$url);

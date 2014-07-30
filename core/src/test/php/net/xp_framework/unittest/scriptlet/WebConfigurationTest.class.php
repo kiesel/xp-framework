@@ -33,9 +33,10 @@ class WebConfigurationTest extends TestCase {
       $p->writeString('app::service@dev', 'debug', 'STACKTRACE|ERRORS');
 
       $this->assertEquals(
-        array('/service' => create(new \xp\scriptlet\WebApplication('service'))
+        array(create(new \xp\scriptlet\WebApplication('service'))
           ->withConfig('{WEBROOT}/etc/{PROFILE}')
           ->withScriptlet('ServiceScriptlet')
+          ->withRoute('/service')
           ->withEnvironment(array('ROLE' => 'admin', 'CLUSTER' => 'a'))
           ->withDebug(\xp\scriptlet\WebDebug::STACKTRACE | \xp\scriptlet\WebDebug::ERRORS)
           ->withArguments(array('a', 'b'))
@@ -103,8 +104,8 @@ class WebConfigurationTest extends TestCase {
 
       $this->assertEquals(
         array(
-          '/service' => create(new \xp\scriptlet\WebApplication('service'))->withConfig('{WEBROOT}/etc'), 
-          '/'        => create(new \xp\scriptlet\WebApplication('global'))->withConfig('{WEBROOT}/etc')
+          create(new \xp\scriptlet\WebApplication('service'))->withConfig('{WEBROOT}/etc')->withRoute('/service'),
+          create(new \xp\scriptlet\WebApplication('global'))->withConfig('{WEBROOT}/etc')->withRoute('/')
         ),
         create(new WebConfiguration($p))->mappedApplications()
       );
@@ -141,8 +142,8 @@ class WebConfigurationTest extends TestCase {
 
       $this->assertEquals(
         array(
-          '/service' => create(new \xp\scriptlet\WebApplication('service'))->withConfig('{WEBROOT}/etc'), 
-          '/'        => create(new \xp\scriptlet\WebApplication('global'))->withConfig('{WEBROOT}/etc')
+          create(new \xp\scriptlet\WebApplication('service'))->withConfig('{WEBROOT}/etc')->withRoute('/service'),
+          create(new \xp\scriptlet\WebApplication('global'))->withConfig('{WEBROOT}/etc')->withRoute('/')
         ),
         create(new WebConfiguration($p))->mappedApplications()
       );
