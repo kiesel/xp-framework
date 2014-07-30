@@ -76,25 +76,28 @@ class WebConfiguration extends \lang\Object {
    * Creates a web application object from a given configuration section
    *
    * @param   string profile
-   * @param   string application app name
-   * @param   string url
+   * @param   string section app name
+   * @param   string url default null
    * @return  xp.scriptlet.WebApplication
    * @throws  lang.IllegalStateException if the web is misconfigured
    */
-  protected function configuredApp($profile, $application, $url) {
-    $section= 'app::'.$application;
+  protected function configuredApp($profile, $section, $url) {
     if (!$this->prop->hasSection($section)) {
       throw new \lang\IllegalStateException('Web misconfigured: Section '.$section.' mapped by '.$url.' missing');
     }
 
-    $app= new WebApplication($application);
+    $app= new WebApplication($section);
     $app->setScriptlet($this->readString($profile, $section, 'class', ''));
     
     // Configuration base
     $app->setConfig($this->readString($profile, $section, 'prop-base', '{WEBROOT}/etc'));
 
     // Route
-    $app->setRoute($url);
+    if ($url) {
+      $app->setRoute($url);
+    } else {
+      $app->setRoute($this->readString($profile, $section, 'route'));
+    }
 
     // Determine debug level
     $flags= WebDebug::NONE;
@@ -124,19 +127,30 @@ class WebConfiguration extends \lang\Object {
     $apps= array();
 
     // Verify configuration
-    if (null === $mappings) {
+    if ($this->prop->hasSection('app') && null === $mappings) {
       foreach ($this->prop->readSection('app') as $key => $url) {
         if (0 !== strncmp('map.', $key, 4)) continue;
-        $apps[]= $this->configuredApp($profile, substr($key, 4), $url);
+        $apps[]= $this->configuredApp($profile, 'app::'.substr($key, 4), $url);
+      }
+    } else if ($this->prop->hasSection('app')) {
+      foreach ($mappings->keys() as $url) {
+        $apps[]= $this->configuredApp($profile, 'app::'.$mappings->get($url), $url);
       }
     } else {
-      foreach ($mappings->keys() as $url) {
-        $apps[]= $this->configuredApp($profile, $mappings->get($url), $url);
-      }
+      $settings= $this->prop->readSection('settings');
+      $section= $this->prop->getFirstSection();
+
+      do {
+
+        // Only parse sections named 'route' or 'route::n'
+        if (0 != strncasecmp('route', $section, 5)) continue;
+
+        $apps[]= $this->configuredApp($profile, $section, null);
+      } while ($section= $this->prop->getNextSection());
     }
 
     if (0 === sizeof($apps)) {
-      throw new \lang\IllegalStateException('Web misconfigured: "app" section missing or broken');
+      throw new \lang\IllegalStateException('No webapp found: "app" or "route" section(s) missing or broken.');
     }
 
     return $apps;

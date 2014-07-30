@@ -1,10 +1,7 @@
 <?php namespace net\xp_framework\unittest\scriptlet;
 
-
-
 use unittest\TestCase;
 use xp\scriptlet\WebConfiguration;
-
 
 /**
  * TestCase
@@ -161,6 +158,35 @@ class WebConfigurationTest extends TestCase {
       $p->writeString('app', 'map.service', '/service');
 
       create(new WebConfiguration($p))->mappedApplications();
+    }
+  }
+
+  #[@test]
+  public function read_new_style_configuration() {
+    with ($p= \util\Properties::fromString('[settings]
+; Optional, defaults to xp\scriptlet\WebApplication:
+configuration-class="my.application.WebApplicationInheritingClass"
+
+; This section is the default route
+[route::1]
+default=true
+route="/"
+class="my.application.scriptlet.WebsiteScriptlet"
+prop-base="{WEBROOT}/etc/{PROFILE}"
+
+; regex route
+[route::2]
+route="#/foo/bar/[a-z]"
+type="regex"
+class="scriptlet.HttpScriptlet"
+
+      ')); {
+        $this->assertEquals(
+          array(
+            create(new \xp\scriptlet\WebApplication('route::1'))->withConfig('{WEBROOT}/etc/{PROFILE}')->withScriptlet('my.application.scriptlet.WebsiteScriptlet')->withRoute('/'),
+            create(new \xp\scriptlet\WebApplication('route::2'))->withConfig('{WEBROOT}/etc')->withScriptlet('scriptlet.HttpScriptlet')->withRoute('#/foo/bar/[a-z]')
+          ),
+          create(new WebConfiguration($p))->mappedApplications());
     }
   }
 }
