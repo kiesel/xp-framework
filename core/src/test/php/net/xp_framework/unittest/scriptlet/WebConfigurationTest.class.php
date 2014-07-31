@@ -63,7 +63,7 @@ class WebConfigurationTest extends TestCase {
    * Verifies that empty configured mappings produce correct result
    *
    */
-  #[@test, @expect(class= 'lang.IllegalStateException', withMessage= 'Web misconfigured: "app" section missing or broken')]
+  #[@test, @expect(class= 'lang.IllegalStateException', withMessage= 'No webapp found: "app" or "route" section(s) missing or broken')]
   public function emptyMappings() {
     with ($p= \util\Properties::fromString('')); {
       $p->writeSection('app');
@@ -76,7 +76,7 @@ class WebConfigurationTest extends TestCase {
    * Verifies that empty configured mappings produce correct result
    *
    */
-  #[@test, @expect(class= 'lang.IllegalStateException', withMessage= 'Web misconfigured: "app" section missing or broken')]
+  #[@test, @expect(class= 'lang.IllegalStateException', withMessage= 'No webapp found: "app" or "route" section(s) missing or broken')]
   public function appSectionWithoutValidMappings() {
     with ($p= \util\Properties::fromString('')); {
       $p->writeSection('app');

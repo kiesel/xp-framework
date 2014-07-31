@@ -86,7 +86,7 @@ class WebConfiguration extends \lang\Object {
       throw new \lang\IllegalStateException('Web misconfigured: Section '.$section.' mapped by '.$url.' missing');
     }
 
-    $app= new WebApplication($section);
+    $app= new WebApplication(strpos($section, 'app::') === 0 ? substr($section, 5) : $section);
     $app->setScriptlet($this->readString($profile, $section, 'class', ''));
     
     // Configuration base
