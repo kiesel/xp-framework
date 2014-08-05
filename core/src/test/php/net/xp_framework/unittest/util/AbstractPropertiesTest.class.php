@@ -229,10 +229,10 @@ hash="foo:bar|bar:foo"
   public function readHash_replaces_environment_references() {
     $p= $this->newPropertiesFrom('
 [section]
-hash="foo:bar${env:ENV_VALUE}|bar${env:ENV_VALUE}:foo"
+hash="foo:bar${env:ENV_VALUE}"
     ');
     $this->assertEquals(
-      new Hashmap(array('foo' => 'bar123abc45', 'bar123abc45' => 'foo')),
+      new Hashmap(array('foo' => 'bar123abc45')),
       $p->readHash('section', 'hash')
     );
   }
