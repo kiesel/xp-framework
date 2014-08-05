@@ -10,7 +10,7 @@ class WebApplication extends \lang\Object {
   protected $name = '';
   protected $config = '';
   protected $scriptlet = '';
-  protected $route = '';
+  protected $route = null;
   protected $arguments = array();
   protected $environment = array();
   protected $debug = 0;
@@ -141,7 +141,7 @@ class WebApplication extends \lang\Object {
   }
 
   /**
-   * Sets this application's route class name
+   * Sets this application's route
    *
    * @param   string route
    */
@@ -150,7 +150,7 @@ class WebApplication extends \lang\Object {
   }
 
   /**
-   * Sets this application's route class name
+   * Sets this application's route
    *
    * @param   string route
    * @return  xp.Route.WebApplication this
@@ -161,12 +161,41 @@ class WebApplication extends \lang\Object {
   }
 
   /**
-   * Returns this application's route class
+   * Returns this application's route
    *
    * @return  string
    */
   public function getRoute() {
     return $this->route;
+  }
+
+  /**
+   * Sets this application's route type
+   *
+   * @param   string routeType
+   */
+  public function setRouteType($routeType) {
+    $this->routeType= $routeType;
+  }
+
+  /**
+   * Sets this application's route type
+   *
+   * @param   string routeType
+   * @return  xp.RouteType.WebApplication this
+   */
+  public function withRouteType($routeType) {
+    $this->routeType= $routeType;
+    return $this;
+  }
+
+  /**
+   * Returns this application's route type
+   *
+   * @return  string
+   */
+  public function getRouteType() {
+    return $this->routeType;
   }
 
   /**

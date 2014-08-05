@@ -92,12 +92,8 @@ class WebConfiguration extends \lang\Object {
     // Configuration base
     $app->setConfig($this->readString($profile, $section, 'prop-base', '{WEBROOT}/etc'));
 
-    // Route
-    if ($url) {
-      $app->setRoute($url);
-    } else {
-      $app->setRoute($this->readString($profile, $section, 'route'));
-    }
+    // Set route
+    $this->setRoute($app, $profile, $section, $url);
 
     // Determine debug level
     $flags= WebDebug::NONE;
@@ -113,6 +109,32 @@ class WebConfiguration extends \lang\Object {
     $app->setEnvironment($this->readHash($profile, $section, 'init-envs', new Hashmap())->toArray());
    
     return $app;
+  }
+
+  protected function setRoute(WebApplication $app, $profile, $section, $url) {
+   if ($url) {
+      $app->setRoute($url);
+      return;
+    }
+
+
+
+    switch ($type= $this->readString($profile, $section, 'type', 'prefix')) {
+      case 'prefix': {
+        $app->setRouteType(WebApplication::ROUTE_TYPE_PREFIX);
+        $app->setRoute($this->readString($profile, $section, 'route'));
+        return;
+      }
+
+      case 'regex': {
+        $app->setRouteType(WebApplication::ROUTE_TYPE_REGEX);
+        $app->setRoute($this->readString($profile, $section, 'route'));
+      }
+
+      default: {
+        throw new \lang\IllegalStateException('Web misconfigured: Invalid route type: "'.$type.'"');
+      }
+    }
   }
   
   /**
