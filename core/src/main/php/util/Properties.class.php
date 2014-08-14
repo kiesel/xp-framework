@@ -305,6 +305,17 @@
               return $this->getEnvValue($match[2]);
             }
 
+            case 'prop': {
+              $ref= explode('.', $match[2]);
+
+              $prop= $this;
+              // if (!empty($ref[0])) {
+              //   $prop= PropertyManager::getInstance()->getProperties($ref[0]);
+              // }
+
+              return $prop->readString($ref[1], $ref[2]);
+            }
+
             default: {
               throw new IllegalArgumentException('Unsupported replacement type "'.$match[1].'" of "'.$match[0].'"');
             }

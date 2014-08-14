@@ -135,6 +135,23 @@ string2="${env.ENV_VALUE}"
   }
   
   /**
+   * Test string reading w/ environment variables
+   *
+   */
+  #[@test]
+  public function readString_replaces_property_references() {
+    $p= $this->newPropertiesFrom('
+[section]
+string1=${prop..different-section.string}
+
+[different-section]
+string="This is the string."
+    ');
+
+    $this->assertEquals('This is the string.', $p->readString('section', 'string1'));
+  }
+
+  /**
    * Test string reading w/ environment variables within strings
    *
    */
