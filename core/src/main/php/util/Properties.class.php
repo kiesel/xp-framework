@@ -299,7 +299,7 @@
 
         return $out;
       } else if (is_string($value)) {
-        return preg_replace_callback('/\$\{([^:]+):([^\}]+)\}/', function($match) {
+        return preg_replace_callback('/\$\{([^.]+)\.([^\}]+)\}/', function($match) {
           switch ($match[1]) {
             case 'env': {
               return $this->getEnvValue($match[2]);

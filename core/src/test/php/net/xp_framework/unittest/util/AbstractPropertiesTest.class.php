@@ -126,8 +126,8 @@ string2="string"
   public function readString_replaces_environment_references() {
     $p= $this->newPropertiesFrom('
 [section]
-string1=${env:ENV_VALUE}
-string2="${env:ENV_VALUE}"
+string1=${env.ENV_VALUE}
+string2="${env.ENV_VALUE}"
     ');
 
     $this->assertEquals('123abc45', $p->readString('section', 'string1'));
@@ -142,7 +142,7 @@ string2="${env:ENV_VALUE}"
   public function readString_replaces_environment_references_within_strings() {
     $p= $this->newPropertiesFrom('
 [section]
-string1="foobar${env:ENV_VALUE}barbaz"
+string1="foobar${env.ENV_VALUE}barbaz"
     ');
 
     $this->assertEquals('foobar123abc45barbaz', $p->readString('section', 'string1'));
@@ -156,7 +156,7 @@ string1="foobar${env:ENV_VALUE}barbaz"
   public function readString_replaces_environment_references_with_empty_string_if_not_exist() {
     $p= $this->newPropertiesFrom('
 [section]
-string1="foobar${env:NO_VALUE}barbaz"
+string1="foobar${env.NO_VALUE}barbaz"
     ');
 
     $this->assertEquals('foobarbarbaz', $p->readString('section', 'string1'));
@@ -183,7 +183,7 @@ array="foo|bar|baz"
   public function readArray_replaces_environment_references() {
     $p= $this->newPropertiesFrom('
 [section]
-array="foo${env:ENV_VALUE}|bar|baz"
+array="foo${env.ENV_VALUE}|bar|baz"
     ');
     $this->assertEquals(array('foo123abc45', 'bar', 'baz'), $p->readArray('section', 'array'));
   }
@@ -229,7 +229,7 @@ hash="foo:bar|bar:foo"
   public function readHash_replaces_environment_references() {
     $p= $this->newPropertiesFrom('
 [section]
-hash="foo:bar${env:ENV_VALUE}"
+hash="foo:bar${env.ENV_VALUE}"
     ');
     $this->assertEquals(
       new Hashmap(array('foo' => 'bar123abc45')),
