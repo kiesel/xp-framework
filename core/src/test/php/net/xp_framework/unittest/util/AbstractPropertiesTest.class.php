@@ -152,6 +152,20 @@ string="This is the string."
   }
 
   /**
+   * Test string reading w/ environment variables
+   *
+   */
+  #[@test, @expect('lang.ElementNotFoundException')]
+  public function readString_fails_with_unresolveable_property_references() {
+    $p= $this->newPropertiesFrom('
+[section]
+string1=${prop.does-not-exist.different-section.string}
+    ');
+
+    $p->readString('section', 'string1');
+  }
+
+  /**
    * Test string reading w/ environment variables within strings
    *
    */

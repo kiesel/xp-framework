@@ -309,9 +309,10 @@
               $ref= explode('.', $match[2]);
 
               $prop= $this;
-              // if (!empty($ref[0])) {
-              //   $prop= PropertyManager::getInstance()->getProperties($ref[0]);
-              // }
+              if (!empty($ref[0])) {
+                XPClass::forName('util.PropertyManager');
+                $prop= PropertyManager::getInstance()->getProperties($ref[0]);
+              }
 
               return $prop->readString($ref[1], $ref[2]);
             }
